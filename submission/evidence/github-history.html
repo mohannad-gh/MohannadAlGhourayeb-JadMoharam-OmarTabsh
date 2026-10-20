@@ -1,0 +1,33 @@
+<html><title>Actual GitHub commit history</title><style>body{font:16px Arial;margin:25px}td,th{border:1px solid #bbb;padding:10px}table{border-collapse:collapse}th{background:#eee}</style><h1>Team GitHub Commit History</h1><p>Authenticated GitHub REST API response for branch jad-moharam</p><p>https://api.github.com/repos/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commits?sha=jad-moharam</p><table><tr><th>Commit</th><th>Author</th><th>Commit message</th></tr><tr><td>f0f9959</td><td>Jad Moharam</td><td>Implement Jad Moharam services 3, 8 and 9 with all 18 APIs</td></tr><tr><td>f2824d8</td><td>Jad Moharam</td><td>Integrate Omar Tabsh services and shared team interfaces</td></tr><tr><td>db97c2f</td><td>Omar Tabsh</td><td>Document Omar Tabsh&#x27;s APIs and the team integration contract
+
+Co-Authored-By: Claude Opus 5.5 &lt;noreply@anthropic.com&gt;</td></tr><tr><td>a4b329a</td><td>Omar Tabsh</td><td>Add run/dev-token scripts, database schema and Postman collection
+
+Postman collection covers all 18 APIs of services 4-6 with positive and
+negative cases (validation, duplicates, 401/403/404/405).
+
+Co-Authored-By: Claude Opus 5.5 &lt;noreply@anthropic.com&gt;</td></tr><tr><td>250293d</td><td>Omar Tabsh</td><td>Implement Security Reports service (Service 6)
+
+Six report endpoints computed from live data fetched through the other
+services&#x27; APIs using the caller&#x27;s token. Includes end-to-end tests running
+the threat, logging and reports services together over HTTP.
+
+Co-Authored-By: Claude Opus 5.5 &lt;noreply@anthropic.com&gt;</td></tr><tr><td>07f06bf</td><td>Omar Tabsh</td><td>Implement Security Audit Logging service (Service 5)
+
+POST /logs for administrators and trusted services, retrieval, search by
+user/date/action/severity/service, logs by user and admin-only deletion.
+Logs are immutable: no update route and a database trigger blocks UPDATE.
+
+Co-Authored-By: Claude Opus 5.5 &lt;noreply@anthropic.com&gt;</td></tr><tr><td>2a06e9f</td><td>Omar Tabsh</td><td>Implement Threat Intelligence service (Service 4)
+
+POST/GET/PUT/DELETE /threats, GET /threats/{id} and GET /threats/search with
+IP, domain and file hash validation, duplicate indicator rejection (409),
+role-based access and automatic audit logging of changes and violations.
+
+Co-Authored-By: Claude Opus 5.5 &lt;noreply@anthropic.com&gt;</td></tr><tr><td>bcc713a</td><td>Omar Tabsh</td><td>Add shared config, JWT authentication, response format and audit client
+
+Shared building blocks for all services: role constants, JWT verification
+with require_roles(), the agreed audit event vocabulary, the audit client
+that sends events to POST /logs with the inter-service key, and JSON error
+handling.
+
+Co-Authored-By: Claude Opus 5.5 &lt;noreply@anthropic.com&gt;</td></tr><tr><td>a620bce</td><td>Jad Moharam</td><td>Set up Flask and SQLite project with service requirements checklist</td></tr><tr><td>67428ca</td><td>mohannad-gh</td><td>Initial commit</td></tr></table><p>This is a view of actual GitHub API data. It is not the GitHub website interface.</p></html>

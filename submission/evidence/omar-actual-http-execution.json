@@ -1,0 +1,922 @@
+[
+  {
+    "number": 1,
+    "owner": "Omar Tabsh",
+    "name": "Add Threat Indicator",
+    "method": "POST",
+    "path": "/threats",
+    "request": {
+      "threat_type": "Domain",
+      "threat_value": "sprint-evidence.example",
+      "description": "Development evidence indicator",
+      "severity": "High",
+      "source": "Team local test"
+    },
+    "status": 201,
+    "expected_status": 201,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "message": "Threat indicator added successfully",
+      "data": {
+        "threat_id": 1,
+        "threat_type": "Domain",
+        "threat_value": "sprint-evidence.example",
+        "description": "Development evidence indicator",
+        "severity": "High",
+        "source": "Team local test",
+        "date_added": "2026-10-20 20:32:11",
+        "last_updated": null
+      }
+    },
+    "timestamp": "2026-10-20T20:32:11.750562+00:00"
+  },
+  {
+    "number": 2,
+    "owner": "Omar Tabsh",
+    "name": "Retrieve All Threat Indicators",
+    "method": "GET",
+    "path": "/threats",
+    "request": null,
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "count": 1,
+      "data": [
+        {
+          "threat_id": 1,
+          "threat_type": "Domain",
+          "threat_value": "sprint-evidence.example",
+          "description": "Development evidence indicator",
+          "severity": "High",
+          "source": "Team local test",
+          "date_added": "2026-10-20 20:32:11",
+          "last_updated": null
+        }
+      ]
+    },
+    "timestamp": "2026-10-20T20:32:11.753561+00:00"
+  },
+  {
+    "number": 3,
+    "owner": "Omar Tabsh",
+    "name": "Retrieve Specific Threat Indicator",
+    "method": "GET",
+    "path": "/threats/1",
+    "request": null,
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "data": {
+        "threat_id": 1,
+        "threat_type": "Domain",
+        "threat_value": "sprint-evidence.example",
+        "description": "Development evidence indicator",
+        "severity": "High",
+        "source": "Team local test",
+        "date_added": "2026-10-20 20:32:11",
+        "last_updated": null
+      }
+    },
+    "timestamp": "2026-10-20T20:32:11.756561+00:00"
+  },
+  {
+    "number": 4,
+    "owner": "Omar Tabsh",
+    "name": "Search Threat Indicators",
+    "method": "GET",
+    "path": "/threats/search?severity=High",
+    "request": null,
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "message": "1 threat indicator(s) matched the search",
+      "count": 1,
+      "filters": {
+        "severity": "High"
+      },
+      "data": [
+        {
+          "threat_id": 1,
+          "threat_type": "Domain",
+          "threat_value": "sprint-evidence.example",
+          "description": "Development evidence indicator",
+          "severity": "High",
+          "source": "Team local test",
+          "date_added": "2026-10-20 20:32:11",
+          "last_updated": null
+        }
+      ]
+    },
+    "timestamp": "2026-10-20T20:32:11.759328+00:00"
+  },
+  {
+    "number": 5,
+    "owner": "Omar Tabsh",
+    "name": "Update Threat Information",
+    "method": "PUT",
+    "path": "/threats/1",
+    "request": {
+      "severity": "Critical",
+      "description": "Confirmed development indicator"
+    },
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "message": "Threat information updated successfully",
+      "previous_values": {
+        "description": "Development evidence indicator",
+        "severity": "High"
+      },
+      "data": {
+        "threat_id": 1,
+        "threat_type": "Domain",
+        "threat_value": "sprint-evidence.example",
+        "description": "Confirmed development indicator",
+        "severity": "Critical",
+        "source": "Team local test",
+        "date_added": "2026-10-20 20:32:11",
+        "last_updated": "2026-10-20 20:32:11"
+      }
+    },
+    "timestamp": "2026-10-20T20:32:11.771008+00:00"
+  },
+  {
+    "number": 6,
+    "owner": "Omar Tabsh",
+    "name": "Create Log Record",
+    "method": "POST",
+    "path": "/logs",
+    "request": {
+      "user_id": 1,
+      "action": "TEAM_EVIDENCE",
+      "description": "Common report evidence run",
+      "severity": "Information",
+      "related_service": "Users"
+    },
+    "status": 201,
+    "expected_status": 201,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "message": "Log record created successfully",
+      "data": {
+        "log_id": 30,
+        "user_id": 1,
+        "action": "TEAM_EVIDENCE",
+        "description": "Common report evidence run",
+        "timestamp": "2026-10-20 20:32:11",
+        "severity": "Information",
+        "related_service": "Users"
+      }
+    },
+    "timestamp": "2026-10-20T20:32:11.777010+00:00"
+  },
+  {
+    "number": 7,
+    "owner": "Omar Tabsh",
+    "name": "Retrieve All Logs",
+    "method": "GET",
+    "path": "/logs",
+    "request": null,
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "count": 30,
+      "data": [
+        {
+          "log_id": 30,
+          "user_id": 1,
+          "action": "TEAM_EVIDENCE",
+          "description": "Common report evidence run",
+          "timestamp": "2026-10-20 20:32:11",
+          "severity": "Information",
+          "related_service": "Users"
+        },
+        {
+          "log_id": 29,
+          "user_id": 1,
+          "action": "THREAT_UPDATED",
+          "description": "Threat #1 (Domain 'sprint-evidence.example') updated: description: 'Development evidence indicator' -> 'Confirmed development indicator'; severity: 'High' -> 'Critical'",
+          "timestamp": "2026-10-20 20:32:11",
+          "severity": "Information",
+          "related_service": "Threat Intelligence"
+        },
+        {
+          "log_id": 28,
+          "user_id": 1,
+          "action": "THREAT_CREATED",
+          "description": "Threat #1 added: Domain 'sprint-evidence.example' (severity High, source Team local test)",
+          "timestamp": "2026-10-20 20:32:11",
+          "severity": "Information",
+          "related_service": "Threat Intelligence"
+        },
+        {
+          "log_id": 27,
+          "user_id": 1,
+          "action": "PLAYBOOK_DELETED",
+          "description": "Playbook 1 deleted; action history retained",
+          "timestamp": "2026-10-20 20:19:54",
+          "severity": "Information",
+          "related_service": "Playbooks"
+        },
+        {
+          "log_id": 26,
+          "user_id": 1,
+          "action": "NOTIFICATION_DELETED",
+          "description": "Notification 1 deleted",
+          "timestamp": "2026-10-20 20:19:54",
+          "severity": "Information",
+          "related_service": "Notifications"
+        },
+        {
+          "log_id": 25,
+          "user_id": 2,
+          "action": "UNAUTHORIZED_ACCESS",
+          "description": "User 'analyst_dev' (id 2, role Security Analyst) was denied access to DELETE /playbooks/1",
+          "timestamp": "2026-10-20 20:19:54",
+          "severity": "Warning",
+          "related_service": "Playbooks"
+        },
+        {
+          "log_id": 24,
+          "user_id": 3,
+          "action": "UNAUTHORIZED_ACCESS",
+          "description": "User 'user_dev' (id 3, role Regular Employee/User) was denied access to GET /playbooks",
+          "timestamp": "2026-10-20 20:19:53",
+          "severity": "Warning",
+          "related_service": "Playbooks"
+        },
+        {
+          "log_id": 23,
+          "user_id": 2,
+          "action": "UNAUTHORIZED_ACCESS",
+          "description": "Users may access only their own notifications",
+          "timestamp": "2026-10-20 20:19:53",
+          "severity": "Warning",
+          "related_service": "Notifications"
+        },
+        {
+          "log_id": 22,
+          "user_id": 3,
+          "action": "UNAUTHORIZED_ACCESS",
+          "description": "User 'user_dev' (id 3, role Regular Employee/User) was denied access to DELETE /notifications/1",
+          "timestamp": "2026-10-20 20:19:53",
+          "severity": "Warning",
+          "related_service": "Notifications"
+        },
+        {
+          "log_id": 21,
+          "user_id": 4,
+          "action": "UNAUTHORIZED_ACCESS",
+          "description": "User 'auditor_dev' (id 4, role Auditor) was denied access to PUT /notifications/1/read",
+          "timestamp": "2026-10-20 20:19:53",
+          "severity": "Warning",
+          "related_service": "Notifications"
+        },
+        {
+          "log_id": 20,
+          "user_id": 6,
+          "action": "UNAUTHORIZED_ACCESS",
+          "description": "Users may access only their own notifications",
+          "timestamp": "2026-10-20 20:19:53",
+          "severity": "Warning",
+          "related_service": "Notifications"
+        },
+        {
+          "log_id": 19,
+          "user_id": 3,
+          "action": "UNAUTHORIZED_ACCESS",
+          "description": "User 'user_dev' (id 3, role Regular Employee/User) was denied access to PUT /incidents/1/assign",
+          "timestamp": "2026-10-20 20:19:52",
+          "severity": "Warning",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 18,
+          "user_id": 6,
+          "action": "UNAUTHORIZED_ACCESS",
+          "description": "Users may access only their own incident reports",
+          "timestamp": "2026-10-20 20:19:52",
+          "severity": "Warning",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 17,
+          "user_id": 2,
+          "action": "UNAUTHORIZED_ACCESS",
+          "description": "User 'analyst_dev' (id 2, role Security Analyst) was denied access to GET /incidents",
+          "timestamp": "2026-10-20 20:19:52",
+          "severity": "Warning",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 16,
+          "user_id": null,
+          "action": "UNAUTHORIZED_ACCESS",
+          "description": "Rejected unauthenticated request to GET /incidents: Missing authentication token. Send the header 'Authorization: Bearer <token>'",
+          "timestamp": "2026-10-20 20:19:52",
+          "severity": "Warning",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 15,
+          "user_id": 2,
+          "action": "RESPONSE_ACTION_UPDATED",
+          "description": "Action 1: In Progress -> Completed",
+          "timestamp": "2026-10-20 20:19:52",
+          "severity": "Information",
+          "related_service": "Playbooks"
+        },
+        {
+          "log_id": 14,
+          "user_id": 2,
+          "action": "RESPONSE_ACTION_UPDATED",
+          "description": "Action 1: Pending -> In Progress",
+          "timestamp": "2026-10-20 20:19:52",
+          "severity": "Information",
+          "related_service": "Playbooks"
+        },
+        {
+          "log_id": 13,
+          "user_id": 2,
+          "action": "RESPONSE_ACTION_ADDED",
+          "description": "Action 1 added to playbook 1",
+          "timestamp": "2026-10-20 20:19:52",
+          "severity": "Information",
+          "related_service": "Playbooks"
+        },
+        {
+          "log_id": 12,
+          "user_id": 1,
+          "action": "PLAYBOOK_CREATED",
+          "description": "Playbook 1 created",
+          "timestamp": "2026-10-20 20:19:51",
+          "severity": "Information",
+          "related_service": "Playbooks"
+        },
+        {
+          "log_id": 11,
+          "user_id": 2,
+          "action": "INCIDENT_NOTE_ADDED",
+          "description": "Note 1 added to incident 1",
+          "timestamp": "2026-10-20 20:19:51",
+          "severity": "Information",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 10,
+          "user_id": 2,
+          "action": "INCIDENT_STATUS_CHANGED",
+          "description": "Incident 1: Resolved -> Closed",
+          "timestamp": "2026-10-20 20:19:51",
+          "severity": "Information",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 9,
+          "user_id": 2,
+          "action": "INCIDENT_STATUS_CHANGED",
+          "description": "Incident 1: Mitigated -> Resolved",
+          "timestamp": "2026-10-20 20:19:51",
+          "severity": "Information",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 8,
+          "user_id": 2,
+          "action": "INCIDENT_STATUS_CHANGED",
+          "description": "Incident 1: Under Investigation -> Mitigated",
+          "timestamp": "2026-10-20 20:19:51",
+          "severity": "Information",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 7,
+          "user_id": 2,
+          "action": "INCIDENT_STATUS_CHANGED",
+          "description": "Incident 1: Open -> Under Investigation",
+          "timestamp": "2026-10-20 20:19:51",
+          "severity": "Information",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 6,
+          "user_id": null,
+          "action": "NOTIFICATION_CREATED",
+          "description": "Notification 2 created for user 2",
+          "timestamp": "2026-10-20 20:19:50",
+          "severity": "Information",
+          "related_service": "Notifications"
+        },
+        {
+          "log_id": 5,
+          "user_id": 1,
+          "action": "INCIDENT_ASSIGNED",
+          "description": "Incident 1 assigned to analyst 2",
+          "timestamp": "2026-10-20 20:19:50",
+          "severity": "Information",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 4,
+          "user_id": 1,
+          "action": "INCIDENT_ASSIGNMENT_AUTHORIZED",
+          "description": "Assignment authorized: incident 1 to analyst 2",
+          "timestamp": "2026-10-20 20:19:50",
+          "severity": "Information",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 3,
+          "user_id": 1,
+          "action": "INCIDENT_CREATED",
+          "description": "Incident 1 created",
+          "timestamp": "2026-10-20 20:19:50",
+          "severity": "Information",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 2,
+          "user_id": 3,
+          "action": "NOTIFICATION_READ",
+          "description": "Notification 1 marked read",
+          "timestamp": "2026-10-20 20:19:50",
+          "severity": "Information",
+          "related_service": "Notifications"
+        },
+        {
+          "log_id": 1,
+          "user_id": 1,
+          "action": "NOTIFICATION_CREATED",
+          "description": "Notification 1 created for user 3",
+          "timestamp": "2026-10-20 20:19:50",
+          "severity": "Information",
+          "related_service": "Notifications"
+        }
+      ]
+    },
+    "timestamp": "2026-10-20T20:32:11.780008+00:00"
+  },
+  {
+    "number": 8,
+    "owner": "Omar Tabsh",
+    "name": "Retrieve Specific Log",
+    "method": "GET",
+    "path": "/logs/30",
+    "request": null,
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "data": {
+        "log_id": 30,
+        "user_id": 1,
+        "action": "TEAM_EVIDENCE",
+        "description": "Common report evidence run",
+        "timestamp": "2026-10-20 20:32:11",
+        "severity": "Information",
+        "related_service": "Users"
+      }
+    },
+    "timestamp": "2026-10-20T20:32:11.783008+00:00"
+  },
+  {
+    "number": 9,
+    "owner": "Omar Tabsh",
+    "name": "Search Logs",
+    "method": "GET",
+    "path": "/logs/search?action=TEAM_EVIDENCE",
+    "request": null,
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "message": "1 log record(s) matched the search",
+      "count": 1,
+      "filters": {
+        "action": "TEAM_EVIDENCE"
+      },
+      "data": [
+        {
+          "log_id": 30,
+          "user_id": 1,
+          "action": "TEAM_EVIDENCE",
+          "description": "Common report evidence run",
+          "timestamp": "2026-10-20 20:32:11",
+          "severity": "Information",
+          "related_service": "Users"
+        }
+      ]
+    },
+    "timestamp": "2026-10-20T20:32:11.786007+00:00"
+  },
+  {
+    "number": 10,
+    "owner": "Omar Tabsh",
+    "name": "Retrieve Logs By User",
+    "method": "GET",
+    "path": "/logs/user/1",
+    "request": null,
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "message": "10 log record(s) found for user 1",
+      "count": 10,
+      "user_id": 1,
+      "data": [
+        {
+          "log_id": 30,
+          "user_id": 1,
+          "action": "TEAM_EVIDENCE",
+          "description": "Common report evidence run",
+          "timestamp": "2026-10-20 20:32:11",
+          "severity": "Information",
+          "related_service": "Users"
+        },
+        {
+          "log_id": 29,
+          "user_id": 1,
+          "action": "THREAT_UPDATED",
+          "description": "Threat #1 (Domain 'sprint-evidence.example') updated: description: 'Development evidence indicator' -> 'Confirmed development indicator'; severity: 'High' -> 'Critical'",
+          "timestamp": "2026-10-20 20:32:11",
+          "severity": "Information",
+          "related_service": "Threat Intelligence"
+        },
+        {
+          "log_id": 28,
+          "user_id": 1,
+          "action": "THREAT_CREATED",
+          "description": "Threat #1 added: Domain 'sprint-evidence.example' (severity High, source Team local test)",
+          "timestamp": "2026-10-20 20:32:11",
+          "severity": "Information",
+          "related_service": "Threat Intelligence"
+        },
+        {
+          "log_id": 27,
+          "user_id": 1,
+          "action": "PLAYBOOK_DELETED",
+          "description": "Playbook 1 deleted; action history retained",
+          "timestamp": "2026-10-20 20:19:54",
+          "severity": "Information",
+          "related_service": "Playbooks"
+        },
+        {
+          "log_id": 26,
+          "user_id": 1,
+          "action": "NOTIFICATION_DELETED",
+          "description": "Notification 1 deleted",
+          "timestamp": "2026-10-20 20:19:54",
+          "severity": "Information",
+          "related_service": "Notifications"
+        },
+        {
+          "log_id": 12,
+          "user_id": 1,
+          "action": "PLAYBOOK_CREATED",
+          "description": "Playbook 1 created",
+          "timestamp": "2026-10-20 20:19:51",
+          "severity": "Information",
+          "related_service": "Playbooks"
+        },
+        {
+          "log_id": 5,
+          "user_id": 1,
+          "action": "INCIDENT_ASSIGNED",
+          "description": "Incident 1 assigned to analyst 2",
+          "timestamp": "2026-10-20 20:19:50",
+          "severity": "Information",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 4,
+          "user_id": 1,
+          "action": "INCIDENT_ASSIGNMENT_AUTHORIZED",
+          "description": "Assignment authorized: incident 1 to analyst 2",
+          "timestamp": "2026-10-20 20:19:50",
+          "severity": "Information",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 3,
+          "user_id": 1,
+          "action": "INCIDENT_CREATED",
+          "description": "Incident 1 created",
+          "timestamp": "2026-10-20 20:19:50",
+          "severity": "Information",
+          "related_service": "Incidents"
+        },
+        {
+          "log_id": 1,
+          "user_id": 1,
+          "action": "NOTIFICATION_CREATED",
+          "description": "Notification 1 created for user 3",
+          "timestamp": "2026-10-20 20:19:50",
+          "severity": "Information",
+          "related_service": "Notifications"
+        }
+      ]
+    },
+    "timestamp": "2026-10-20T20:32:11.788008+00:00"
+  },
+  {
+    "number": 11,
+    "owner": "Omar Tabsh",
+    "name": "Summary Report",
+    "method": "GET",
+    "path": "/reports/summary",
+    "request": null,
+    "status": 503,
+    "expected_status": 503,
+    "passed": true,
+    "response": {
+      "status": "error",
+      "message": "Could not generate the Security Summary Report: The Users and Identity Management service is not reachable at http://127.0.0.1:5191/users. Make sure it is running",
+      "errors": {
+        "source": "Users and Identity Management"
+      }
+    },
+    "timestamp": "2026-10-20T20:32:13.841525+00:00"
+  },
+  {
+    "number": 12,
+    "owner": "Omar Tabsh",
+    "name": "Incidents Report",
+    "method": "GET",
+    "path": "/reports/incidents",
+    "request": null,
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "message": "Incident Report generated successfully",
+      "data": {
+        "total_incidents": 1,
+        "incidents_by_severity": {
+          "Low": 0,
+          "Medium": 0,
+          "High": 1,
+          "Critical": 0
+        },
+        "incidents_by_status": {
+          "Open": 0,
+          "Under Investigation": 0,
+          "Mitigated": 0,
+          "Resolved": 0,
+          "Closed": 1
+        },
+        "generated_at": "2026-10-20 20:32:13 UTC",
+        "data_sources": [
+          "Incident Management service: GET http://127.0.0.1:5103/incidents"
+        ]
+      }
+    },
+    "timestamp": "2026-10-20T20:32:13.847524+00:00"
+  },
+  {
+    "number": 13,
+    "owner": "Omar Tabsh",
+    "name": "Assets Report",
+    "method": "GET",
+    "path": "/reports/assets",
+    "request": null,
+    "status": 503,
+    "expected_status": 503,
+    "passed": true,
+    "response": {
+      "status": "error",
+      "message": "Could not generate the Asset Report: The Asset Management service is not reachable at http://127.0.0.1:5192/assets. Make sure it is running",
+      "errors": {
+        "source": "Asset Management"
+      }
+    },
+    "timestamp": "2026-10-20T20:32:15.870644+00:00"
+  },
+  {
+    "number": 14,
+    "owner": "Omar Tabsh",
+    "name": "Threats Report",
+    "method": "GET",
+    "path": "/reports/threats",
+    "request": null,
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "message": "Threat Report generated successfully",
+      "data": {
+        "total_threats": 1,
+        "threats_by_severity": {
+          "Low": 0,
+          "Medium": 0,
+          "High": 0,
+          "Critical": 1
+        },
+        "threats_by_type": {
+          "IP Address": 0,
+          "Domain": 1,
+          "File Hash": 0,
+          "Malware Signature": 0,
+          "Other": 0
+        },
+        "recently_added_threats": [
+          {
+            "threat_id": 1,
+            "threat_type": "Domain",
+            "threat_value": "sprint-evidence.example",
+            "severity": "Critical",
+            "source": "Team local test",
+            "date_added": "2026-10-20 20:32:11"
+          }
+        ],
+        "generated_at": "2026-10-20 20:32:15 UTC",
+        "data_sources": [
+          "Threat Intelligence service: GET http://127.0.0.1:5104/threats"
+        ]
+      }
+    },
+    "timestamp": "2026-10-20T20:32:15.875644+00:00"
+  },
+  {
+    "number": 15,
+    "owner": "Omar Tabsh",
+    "name": "Vulnerabilities Report",
+    "method": "GET",
+    "path": "/reports/vulnerabilities",
+    "request": null,
+    "status": 503,
+    "expected_status": 503,
+    "passed": true,
+    "response": {
+      "status": "error",
+      "message": "Could not generate the Vulnerability Report: The Vulnerability Management service is not reachable at http://127.0.0.1:5197/vulnerabilities. Make sure it is running",
+      "errors": {
+        "source": "Vulnerability Management"
+      }
+    },
+    "timestamp": "2026-10-20T20:32:17.922599+00:00"
+  },
+  {
+    "number": 16,
+    "owner": "Omar Tabsh",
+    "name": "Activity Report",
+    "method": "GET",
+    "path": "/reports/activity",
+    "request": null,
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "message": "Activity Report generated successfully",
+      "data": {
+        "total_user_activities": 30,
+        "login_attempts": 0,
+        "successful_logins": 0,
+        "failed_login_attempts": 0,
+        "unauthorized_access_attempts": 10,
+        "most_performed_actions": [
+          {
+            "action": "UNAUTHORIZED_ACCESS",
+            "count": 10
+          },
+          {
+            "action": "INCIDENT_STATUS_CHANGED",
+            "count": 4
+          },
+          {
+            "action": "NOTIFICATION_CREATED",
+            "count": 2
+          },
+          {
+            "action": "RESPONSE_ACTION_UPDATED",
+            "count": 2
+          },
+          {
+            "action": "INCIDENT_ASSIGNED",
+            "count": 1
+          }
+        ],
+        "activities_by_severity": {
+          "Information": 20,
+          "Warning": 10,
+          "Error": 0,
+          "Critical": 0
+        },
+        "generated_at": "2026-10-20 20:32:17 UTC",
+        "data_sources": [
+          "Security Audit Logging service: GET http://127.0.0.1:5105/logs"
+        ]
+      }
+    },
+    "timestamp": "2026-10-20T20:32:17.930108+00:00"
+  },
+  {
+    "number": 17,
+    "owner": "Omar Tabsh",
+    "name": "Reject Regular User Threat Creation",
+    "method": "POST",
+    "path": "/threats",
+    "request": {},
+    "status": 403,
+    "expected_status": 403,
+    "passed": true,
+    "response": {
+      "status": "error",
+      "message": "User does not have permission to perform this operation"
+    },
+    "timestamp": "2026-10-20T20:32:17.939887+00:00"
+  },
+  {
+    "number": 18,
+    "owner": "Omar Tabsh",
+    "name": "Reject Invalid Domain",
+    "method": "POST",
+    "path": "/threats",
+    "request": {
+      "threat_type": "Domain",
+      "threat_value": "https://invalid/path",
+      "description": "Invalid",
+      "severity": "High",
+      "source": "Local test"
+    },
+    "status": 400,
+    "expected_status": 400,
+    "passed": true,
+    "response": {
+      "status": "error",
+      "message": "Invalid threat indicator",
+      "errors": {
+        "threat_value": "'https://invalid/path' is not a valid domain name (expected something like malicious-site.com, without http:// or a path)"
+      }
+    },
+    "timestamp": "2026-10-20T20:32:17.943883+00:00"
+  },
+  {
+    "number": 19,
+    "owner": "Omar Tabsh",
+    "name": "Delete Log Record",
+    "method": "DELETE",
+    "path": "/logs/30",
+    "request": null,
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "message": "Log record 30 deleted successfully",
+      "data": {
+        "log_id": 30,
+        "user_id": 1,
+        "action": "TEAM_EVIDENCE",
+        "description": "Common report evidence run",
+        "timestamp": "2026-10-20 20:32:11",
+        "severity": "Information",
+        "related_service": "Users"
+      }
+    },
+    "timestamp": "2026-10-20T20:32:17.954884+00:00"
+  },
+  {
+    "number": 20,
+    "owner": "Omar Tabsh",
+    "name": "Delete Threat Indicator",
+    "method": "DELETE",
+    "path": "/threats/1",
+    "request": null,
+    "status": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "status": "success",
+      "message": "Threat indicator 1 deleted successfully",
+      "data": {
+        "threat_id": 1,
+        "threat_type": "Domain",
+        "threat_value": "sprint-evidence.example",
+        "description": "Confirmed development indicator",
+        "severity": "Critical",
+        "source": "Team local test",
+        "date_added": "2026-10-20 20:32:11",
+        "last_updated": "2026-10-20 20:32:11"
+      }
+    },
+    "timestamp": "2026-10-20T20:32:17.966884+00:00"
+  }
+]

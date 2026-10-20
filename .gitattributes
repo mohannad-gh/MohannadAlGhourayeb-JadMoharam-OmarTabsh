@@ -1,0 +1,6 @@
+# Preserve binary report and evidence bytes on Windows checkouts.
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.zip binary
