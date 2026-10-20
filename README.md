@@ -49,3 +49,28 @@ python -m services.security_reports.app     # http://127.0.0.1:5006
 - **API documentation:** [docs/OMAR_TABSH_API_DOCUMENTATION.md](docs/OMAR_TABSH_API_DOCUMENTATION.md)
 - **Database:** tables `threats` and `logs` in `database/security_system.db`
   (structure: [database/schema_omar_tabsh.sql](database/schema_omar_tabsh.sql)).
+
+## Jad Moharam's services (3, 8, 9)
+
+All 18 APIs are implemented: Incidents on 5003, Notifications on 5008,
+and Playbooks on 5009. This development branch includes Omar's services and
+shared helpers with his original commit history.
+
+Start Omar's Audit Logging service, then run Jad's services from a second terminal:
+
+```powershell
+.\.venv\Scripts\python.exe -m services.audit_logging.app
+# Second terminal:
+.\.venv\Scripts\python.exe run.py
+```
+
+- [Windows setup and Postman instructions](docs/windows-setup.md)
+- [All 18 API contracts and database relationships](docs/JAD_API_DOCUMENTATION.md)
+- [Integration with Omar and prerequisites for Mohannad](docs/JAD_INTEGRATION_NOTES.md)
+- [Implementation and remaining submission checklist](docs/implementation-checklist.md)
+- [Verification results](docs/JAD_VERIFICATION.md)
+
+Import `postman/JadMoharam-Services.postman_collection.json` for the 47 ordered
+requests. A separate, ignored `database/jad_demo.db` provides development fixtures
+until Mohannad's real user/asset services are integrated; it does not implement
+his services. Real Postman screenshots and real-login evidence remain to be collected.

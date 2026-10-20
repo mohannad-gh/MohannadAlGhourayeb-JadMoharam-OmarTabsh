@@ -227,3 +227,8 @@ database/*.db
 
 # Submission package
 *-430L.zip
+# Jad local setup data
+*.db-wal
+*.db-shm
+.claude/
+postman/*.local.postman_environment.json
