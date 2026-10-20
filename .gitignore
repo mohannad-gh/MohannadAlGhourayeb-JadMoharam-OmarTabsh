@@ -232,3 +232,6 @@ database/*.db
 *.db-shm
 .claude/
 postman/*.local.postman_environment.json
+
+# macOS system files
+.DS_Store
