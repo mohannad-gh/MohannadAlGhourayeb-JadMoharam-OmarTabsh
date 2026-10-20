@@ -219,8 +219,10 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Local project data and credentials
-*.db
+# Local SQLite database
+database/*.db
+
+# Jad local setup data
 *.db-wal
 *.db-shm
 .claude/
