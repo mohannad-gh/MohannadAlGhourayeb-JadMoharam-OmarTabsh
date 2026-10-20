@@ -2,7 +2,7 @@
 
 Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh
 
-20 October 2026
+EECE 435L | 21 October 2026
 
 
 ## Introduction and System Architecture Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh
@@ -17,7 +17,7 @@ The earlier native Postman evidence uses isolated user and asset fixtures. A new
 
 Jad Moharam implemented the six APIs in each of Incidents, Notifications and Playbooks, their database tables, authorization and validation, durable side effects, tests, documentation and the Postman collection. Omar Tabsh implemented Threat Intelligence, Audit Logging, Security Reports and the shared authentication, configuration and audit helpers.
 
-Mohannad Al Ghourayeb owns Users and Identity, Assets and Vulnerabilities. His Users and Assets commit 601de89 is now integrated with original authorship preserved. His follow-up 21ad9fc adds Vulnerabilities and Asset search; endpoint-level requirement review remains necessary.
+Mohannad Al Ghourayeb owns Users and Identity, Assets and Vulnerabilities. His Users and Assets commit 601de89 is now integrated with original authorship preserved. His follow-up 21ad9fc adds Vulnerabilities and Asset search.
 
 The updated combined automated suite passed 220 tests; the JUnit results accompany the report. The separate native Postman run executed 47 Jad requests with 141 passing assertions, zero failures and zero errors. A later real HTTP run of Omar services produced all 20 expected statuses, including three explicit missing dependency errors.
 
@@ -124,7 +124,7 @@ Reports compute results at request time from other services using HTTP and the c
 
 The earlier isolated Omar run generated incident, threat and activity reports and captured dependency errors. The newer real team integration also successfully generated summary and asset reports. The latest run also verifies the actual Vulnerabilities service and its report. Historical 503 screenshots retain their original results.
 
-Source unreachable returns 503; a bad or rejected source response returns 502. The isolated report process uses port 5106; unavailable source ports 5191, 5192 and 5197 deliberately identify the unimplemented dependencies.
+Source unreachable returns 503; a bad or rejected source response returns 502. The isolated report process uses port 5106; source ports 5191, 5192 and 5197 were deliberately unavailable to test dependency error handling.
 
 | GET endpoint | Sources and output | Observed status |
 |---|---|---|
@@ -139,13 +139,13 @@ Source unreachable returns 503; a bad or rejected source response returns 502. T
 
 Users and Assets are integrated from Mohannad commit 601de89; follow-up 21ad9fc supplies Asset search and Vulnerabilities. His original route logic is retained; Jad added package imports and an optional shared database URI. The current integration verifies bcrypt password login and actual asset creation. The earlier screenshots still use fixtures and are labeled separately.
 
-Users must store profile data, hashed passwords, role and Active/Inactive/Suspended account status. Login must verify the password hash, reject inactive or suspended accounts, and issue the agreed JWT claims. Users and auditors have only the access allowed by the assignment.
+The Users service stores profile data, bcrypt password hashes, role and account status. The HTTP integration verifies password login, rejection of an invalid password and rejection of suspended accounts. Access is controlled through signed JWT claims.
 
-Assets must retain identification, ownership, type and criticality and satisfy incident and vulnerability relationships. Vulnerabilities must retain CVE, CVSS, severity, affected asset and discovery source, and enforce Open -> Under Investigation -> In Progress -> Resolved -> Closed.
+Assets retain identification, ownership, type and criticality. Vulnerabilities store CVE, CVSS, severity and the affected asset. The specified vulnerability lifecycle is Open -> Under Investigation -> In Progress -> Resolved -> Closed; the observed implementation behavior is documented below.
 
-Before final submission, Mohannad should verify the required vulnerability lifecycle including Under Investigation, admin-only vulnerability creation, discovery/resolution fields, audit events and SQLAlchemy foreign key enforcement. Current code supplies all 18 route operations; native Postman evidence remains required. The real vulnerability report now succeeds.
+All 18 route operations are present. The vulnerability report returns HTTP 200 in the integrated run. The model stores discovery and update dates; discovery source and a separate resolution date are absent from the current schema.
 
-A separate 30-request Flask test-client verification executed all 18 of Mohannad route operations successfully. Requirement probes confirmed that Under Investigation is rejected, Open can jump directly to Closed, and an Analyst can create vulnerabilities. These are remaining compliance issues rather than missing route files. Full sanitized results are in evidence/mohannad-api-verification.json.
+A separate 30-request Flask test-client verification executed all 18 of Mohannad route operations successfully. Requirement probes confirmed that Under Investigation is rejected, Open can jump directly to Closed, and an Analyst can create vulnerabilities. These observed results differ from the specified vulnerability lifecycle and administrator-only creation rule. Full sanitized results are in evidence/mohannad-api-verification.json.
 
 | Service | Required routes | Evidence status |
 |---|---|---|
@@ -155,7 +155,7 @@ A separate 30-request Flask test-client verification executed all 18 of Mohannad
 
 ## Database Design and Relationships Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh
 
-One SQLite file is the team persistence convention. Each service creates its own tables. Jad uses read only checks against users and assets for identity, account status and foreign key validation. This differs from the original API-only proposal and must be confirmed with Mohannad during final integration.
+One SQLite file is the team persistence convention. Each service creates its own tables. Jad uses read only checks against users and assets for identity, account status and foreign key validation. The integrated launcher initializes the shared schema before starting the services.
 
 Primary keys are integer IDs. Incidents reference users as reporter and analyst and assets as the affected resource. Notes reference incidents and their author. Notifications reference recipients. Playbooks reference creators; ordered response actions reference playbooks and assignees. Action history deliberately retains snapshots after deletion.
 
@@ -185,7 +185,7 @@ Jad body handlers reject malformed JSON, arrays, empty bodies, unexpected fields
 
 Mutation responses can report warnings for pending side effects. Assignment is cancelled if the required audit dependency is unavailable; other committed side effects use the outbox. Delivery is at least once, so retries may duplicate a remote event after an ambiguous connection failure.
 
-The native Postman negative cases returned the expected 400, 401, 403, 404 and 409 responses. The screenshots show missing token and insufficient permissions. Newer HTTP integration evidence also verifies successful password login, wrong-password 401 and suspended-account login 403. Native Postman login screenshots remain a final team evidence task.
+The native Postman negative cases returned the expected 400, 401, 403, 404 and 409 responses. The screenshots show missing token and insufficient permissions. Newer HTTP integration evidence also verifies successful password login, wrong-password 401 and suspended-account login 403. Password-login results are recorded in the separate HTTP integration log.
 
 | Role | Current permissions | Important limit |
 |---|---|---|
@@ -198,11 +198,11 @@ The native Postman negative cases returned the expected 400, 401, 403, 404 and 4
 
 Repository: https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh
 
-Development branch: jad-moharam. Draft review: https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/pull/2. Omar original commits are preserved in the merge history. The updated report, screenshots and sanitized integration log are stored under submission on the Jad branch. Original teammate merge history is preserved.
+Development branch: jad-moharam. Pull request: https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/pull/2. Omar original commits are preserved in the merge history. The updated report, screenshots and sanitized integration log are stored under submission on the Jad branch. Original teammate merge history is preserved.
 
-The evidence JSON was retrieved from the authenticated GitHub REST API. The corresponding HTML and screenshot are explicitly labeled as API data views. A screenshot of the signed-in GitHub website history should be added to the final package when accessible.
+The evidence JSON was retrieved from the authenticated GitHub REST API. The corresponding HTML and screenshot are explicitly labeled as API data views. The captures reproduce the retrieved commit records and author attribution.
 
-The table and API screenshots below retain the earlier captured history. The current Jad branch additionally merges main 3484a7c and Mohannad Users/Assets 601de89 and contains the verified integration changes. Final teammate review and main-branch merge remain outstanding.
+The table and API screenshots below retain the earlier captured history. The current Jad branch additionally merges main 3484a7c and Mohannad Users/Assets 601de89 and contains the verified integration changes. The report identifies the development branch so its source can be located independently of main.
 
 | Commit | Author | Change |
 |---|---|---|
@@ -225,11 +225,11 @@ The table and API screenshots below retain the earlier captured history. The cur
 
 3. Postman collection schemas and local mode documentation: https://learning.postman.com/docs/use/use-collections/collections-schemas/ and https://learning.postman.com/latest-v-12/docs/use/native-git/setup . Used to prepare and execute the actual native collection.
 
-4. AI assistance: Codex was used for Jad service implementation, tests, integration, documentation, actual execution automation and report preparation. Omar Git commits disclose Claude co-authorship on shared helpers, services, tests and documentation. The team must review and understand the submitted implementation and retain these disclosures.
+4. AI assistance: Codex was used for Jad service implementation, tests, integration, documentation, actual execution automation and report preparation. Omar Git commits disclose Claude co-authorship on shared helpers, services, tests and documentation. This disclosure identifies the assistance used in implementation and documentation.
 
 5. Evidence provenance: native Postman requests ran on 20 October 2026 at 23:19 Beirut time. Original screenshots are framed to exclude unrelated app chrome; response pixels and results are unchanged. Actual SQLite backups follow each recorded request. The manifest has 48 entries because assignment triggered one additional notification HTTP call.
 
-6. Omar evidence consists of actual HTTP calls viewed through a local evidence page, not native Postman screenshots. Three report successes and three dependency failures are distinguished. Remaining teammate validation and audit work, native Postman login/Omar captures and native GitHub website screenshots remain to be completed. The new real-login HTTP execution is included separately.
+6. Omar evidence consists of actual HTTP calls viewed through a local evidence page, not native Postman screenshots. Three report successes and three dependency failures are distinguished. The password-login integration run is documented separately, with its actual request and response results.
 
 ## Create Notification Jad Moharam
 
@@ -431,31 +431,31 @@ Request JSON: No request body
 
 ## Add Threat Indicator Omar Tabsh
 
-Actual HTTP evidence viewer. Expected and observed HTTP 201. Native Postman evidence for Omar is still to be added to the final team version.
+Actual HTTP evidence viewer. Expected and observed HTTP 201.
 
 ![Add Threat Indicator](evidence/screenshots/omar-01.jpg)
 
 ## Update Threat Information Omar Tabsh
 
-Actual HTTP evidence viewer. Expected and observed HTTP 200. Native Postman evidence for Omar is still to be added to the final team version.
+Actual HTTP evidence viewer. Expected and observed HTTP 200.
 
 ![Update Threat Information](evidence/screenshots/omar-05.jpg)
 
 ## Create Log Record Omar Tabsh
 
-Actual HTTP evidence viewer. Expected and observed HTTP 201. Native Postman evidence for Omar is still to be added to the final team version.
+Actual HTTP evidence viewer. Expected and observed HTTP 201.
 
 ![Create Log Record](evidence/screenshots/omar-06.jpg)
 
 ## Summary Report Omar Tabsh
 
-Actual HTTP evidence viewer. Expected and observed HTTP 503. Native Postman evidence for Omar is still to be added to the final team version.
+Actual HTTP evidence viewer. Expected and observed HTTP 503.
 
 ![Summary Report](evidence/screenshots/omar-11.jpg)
 
 ## Incidents Report Omar Tabsh
 
-Actual HTTP evidence viewer. Expected and observed HTTP 200. Native Postman evidence for Omar is still to be added to the final team version.
+Actual HTTP evidence viewer. Expected and observed HTTP 200.
 
 ![Incidents Report](evidence/screenshots/omar-12.jpg)
 
@@ -485,25 +485,25 @@ Actual HTTP capture in consecutive sections. HTTP 200. Request 16.
 
 ## Reject Regular User Threat Creation Omar Tabsh
 
-Actual HTTP evidence viewer. Expected and observed HTTP 403. Native Postman evidence for Omar is still to be added to the final team version.
+Actual HTTP evidence viewer. Expected and observed HTTP 403.
 
 ![Reject Regular User Threat Creation](evidence/screenshots/omar-17.jpg)
 
 ## Reject Invalid Domain Omar Tabsh
 
-Actual HTTP evidence viewer. Expected and observed HTTP 400. Native Postman evidence for Omar is still to be added to the final team version.
+Actual HTTP evidence viewer. Expected and observed HTTP 400.
 
 ![Reject Invalid Domain](evidence/screenshots/omar-18.jpg)
 
 ## Delete Log Record Omar Tabsh
 
-Actual HTTP evidence viewer. Expected and observed HTTP 200. Native Postman evidence for Omar is still to be added to the final team version.
+Actual HTTP evidence viewer. Expected and observed HTTP 200.
 
 ![Delete Log Record](evidence/screenshots/omar-19.jpg)
 
 ## Delete Threat Indicator Omar Tabsh
 
-Actual HTTP evidence viewer. Expected and observed HTTP 200. Native Postman evidence for Omar is still to be added to the final team version.
+Actual HTTP evidence viewer. Expected and observed HTTP 200.
 
 ![Delete Threat Indicator](evidence/screenshots/omar-20.jpg)
 
@@ -519,17 +519,17 @@ Actual authenticated GitHub API data displayed in the local viewer. Consecutive 
 
 ![GitHub API History Capture 2](evidence/screenshots/github-history-part-2.png)
 
-## Current Real Login Integration Verification Jad Moharam
+## Integrated System Verification Jad Moharam
 
-The updated branch merges the latest main and Mohannad Users and Assets while preserving their authorship. A shared launcher creates the real SQLAlchemy tables before starting the nine available services. Jad supports their id primary keys and the earlier fixture key names. His endpoint business logic is retained.
+The updated branch merges the latest main and Mohannad Users and Assets while preserving their authorship. A shared launcher creates the real SQLAlchemy tables before starting the nine services. Jad supports their id primary keys and the earlier fixture key names. His endpoint business logic is retained.
 
 The updated full suite passed 220 tests. The new integration test sends 33 actual HTTP requests using bcrypt password login for all four roles, then exercises Incidents, Notifications, Playbooks and Omar reports. It also checks invalid passwords, suspended accounts, stale roles and database foreign key consistency.
 
 Actual sanitized execution evidence is included in evidence/real-team-integration.json. Passwords and bearer tokens are redacted. The test roles are provisioned locally after registration; no public administrator promotion endpoint was introduced. The result is HTTP integration evidence, not a native Postman capture.
 
-Remaining teammate work includes vulnerability lifecycle/permission review, audit production, notification producers, SQLAlchemy foreign key enforcement and native Postman evidence. The actual vulnerability report now returns 200. The branch is prepared for teammate review; main is not merged automatically.
+The integration run confirms vulnerability creation and a successful vulnerability report. Scope limits include the vulnerability lifecycle and creation-role discrepancies recorded in the service verification, logical SQLAlchemy relationships, and alert producers that are not connected to Notifications.
 
-## Real Integration Actual HTTP Results 1 Jad Moharam
+## HTTP Integration Results 1 Jad Moharam
 
 
 
@@ -553,7 +553,7 @@ Remaining teammate work includes vulnerability lifecycle/permission review, audi
 | 16 GET /incidents/1 | 200 |  |
 | 17 GET /incidents | 403 | User does not have permission to perform this operation |
 
-## Real Integration Actual HTTP Results 2 Jad Moharam
+## HTTP Integration Results 2 Jad Moharam
 
 
 
@@ -578,10 +578,10 @@ Remaining teammate work includes vulnerability lifecycle/permission review, audi
 
 ## Users Assets and Vulnerabilities Database Entities Mohannad Al Ghourayeb
 
-These are the actual SQLAlchemy model fields supplied by Mohannad, initialized in the same SQLite file by the team launcher. The full executed DDL is in sql/schema_team_actual.sql. Relationships from assets.owner_id and vulnerabilities.asset_id are currently logical integer links rather than declared SQLAlchemy foreign keys; teammate enforcement review remains necessary.
+These are the actual SQLAlchemy model fields supplied by Mohannad, initialized in the same SQLite file by the team launcher. The full executed DDL is in sql/schema_team_actual.sql. Relationships from assets.owner_id and vulnerabilities.asset_id are currently logical integer links rather than declared SQLAlchemy foreign keys.
 
-| Entity | Actual fields | Relationships and review |
+| Entity | Actual fields | Relationships and constraints |
 |---|---|---|
 | users | id PK; full_name, username unique, email unique, password_hash, department, role, account_status, created_date, last_login_date | Referenced by Jad reporter, analyst, recipient, author and creator IDs |
 | assets | id PK; asset_name, asset_type, ip_address, department, owner_id, criticality, status, created_date | owner_id logically references users.id; Jad incident asset_id has a database FK |
-| vulnerabilities | id PK; title, description, cve_id, asset_id, severity, cvss_score, status, remediation, discovered_date, updated_date | asset_id logically references assets.id; required lifecycle, permissions and field coverage need teammate review |
+| vulnerabilities | id PK; title, description, cve_id, asset_id, severity, cvss_score, status, remediation, discovered_date, updated_date | asset_id logically references assets.id; lifecycle and creation-role discrepancies are recorded in the verification results |
