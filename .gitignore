@@ -222,3 +222,8 @@ __marimo__/
 # Local databases
 *.db
 *.sqlite3
+# Local SQLite database
+database/*.db
+
+# Submission package
+*-430L.zip
