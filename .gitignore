@@ -229,3 +229,6 @@ database/*.db
 postman/*.local.postman_environment.json
 # Submission package
 *-430L.zip
+# Local databases
+*.db
+*.sqlite3
