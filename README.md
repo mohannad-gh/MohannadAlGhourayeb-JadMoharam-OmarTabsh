@@ -44,6 +44,8 @@ python -m services.security_reports.app     # http://127.0.0.1:5006
 - **Postman:** import `postman/OmarTabsh-Services.postman_collection.json` and fill in
   the token variables and `service_key`.
 - **Automated tests:** `python -m pytest`
+- **Submission zip:** `python -m scripts.package_submission Final_Report.docx` creates
+  `MohannadAlGhourayeb-JadMoharam-OmarTabsh-430L.zip` (code, database, Postman, report; never `.env`).
 - **API documentation:** [docs/OMAR_TABSH_API_DOCUMENTATION.md](docs/OMAR_TABSH_API_DOCUMENTATION.md)
 - **Database:** tables `threats` and `logs` in `database/security_system.db`
   (structure: [database/schema_omar_tabsh.sql](database/schema_omar_tabsh.sql)).

@@ -227,3 +227,5 @@ database/*.db
 *.db-shm
 .claude/
 postman/*.local.postman_environment.json
+# Submission package
+*-430L.zip

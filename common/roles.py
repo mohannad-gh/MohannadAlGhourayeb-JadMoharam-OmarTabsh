@@ -14,3 +14,26 @@ ROLE_TITLES = {
     USER: "Regular Employee/User",
     AUDITOR: "Auditor",
 }
+
+# Full role titles stored by the Users service (e.g. "Security Administrator") -> role code
+_ROLE_ALIASES = {
+    "security administrator": ADMIN,
+    "administrator": ADMIN,
+    "security analyst": ANALYST,
+    "analyst": ANALYST,
+    "regular user": USER,
+    "regular employee": USER,
+    "regular employee/user": USER,
+    "employee": USER,
+    "auditor": AUDITOR,
+}
+
+
+def normalize_role(value):
+    """Return the role code for a code or a full role title, or None if unknown."""
+    if not isinstance(value, str):
+        return None
+    key = " ".join(value.split()).lower()
+    if key in ALL_ROLES:
+        return key
+    return _ROLE_ALIASES.get(key)

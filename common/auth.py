@@ -6,6 +6,7 @@
 # require_roles(), using the same JWT_SECRET_KEY, so no extra call is needed.
 #
 # Token claims: {"sub": "7", "user_id": 7, "username": "jdoe", "role": "analyst", "iat": ..., "exp": ...}
+# Tokens from flask_jwt_extended ({"sub": "7", "role": "Security Analyst"}) are accepted too.
 #
 #   401 -> token missing, malformed, expired or signed with another key
 #   403 -> valid token, but the role is not allowed for this endpoint
@@ -22,7 +23,7 @@ from common import config
 from common.audit_client import audit_event
 from common.audit_events import UNAUTHORIZED_ACCESS, WARNING
 from common.responses import error
-from common.roles import ALL_ROLES, ROLE_TITLES
+from common.roles import ALL_ROLES, ROLE_TITLES, normalize_role
 
 PERMISSION_DENIED_MESSAGE = "User does not have permission to perform this operation"
 
@@ -48,19 +49,39 @@ def create_token(user_id, username, role, expires_minutes=None):
 
 
 def decode_token(token):
-    """Verify a token and return {"user_id", "username", "role"}. Raises AuthenticationError."""
+    """Verify a token and return {"user_id", "username", "role"}. Raises AuthenticationError.
+
+    Accepts both token formats used in the team:
+      - create_token() above: {"user_id": 7, "username": "jdoe", "role": "analyst", ...}
+      - flask_jwt_extended create_access_token(identity=str(id), additional_claims={"role": "Security Analyst"}):
+        {"sub": "7", "role": "Security Analyst", "type": "access", ...}
+    Both must be signed with the shared JWT_SECRET_KEY.
+    """
     try:
         claims = jwt.decode(token, config.JWT_SECRET_KEY, algorithms=[config.JWT_ALGORITHM],
-                            options={"require": ["exp", "user_id", "role"]})
+                            options={"require": ["exp", "role"]})
     except jwt.ExpiredSignatureError:
         raise AuthenticationError("Authentication token has expired. Please log in again")
     except jwt.InvalidTokenError:
         raise AuthenticationError("Invalid authentication token")
 
-    user_id = claims.get("user_id")
-    if claims.get("role") not in ALL_ROLES or not isinstance(user_id, int) or isinstance(user_id, bool):
+    if claims.get("type", "access") != "access":  # refresh tokens cannot call APIs
         raise AuthenticationError("Invalid authentication token")
-    return {"user_id": user_id, "username": claims.get("username"), "role": claims["role"]}
+    role = normalize_role(claims.get("role"))
+    user_id = _parse_user_id(claims.get("user_id", claims.get("sub")))
+    if role is None or user_id is None:
+        raise AuthenticationError("Invalid authentication token")
+    return {"user_id": user_id, "username": claims.get("username") or f"user {user_id}", "role": role}
+
+
+def _parse_user_id(value):
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value if value > 0 else None
+    if isinstance(value, str) and value.isdigit() and int(value) > 0:
+        return int(value)
+    return None
 
 
 def get_bearer_token():

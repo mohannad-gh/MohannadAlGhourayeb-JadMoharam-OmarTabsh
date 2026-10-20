@@ -274,6 +274,39 @@
           ]
         },
         {
+          "name": "Omar Tabsh - Add Threat - Empty Body (rejected)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{threats_url}}/threats",
+            "description": "A request without a JSON body is rejected with 'Request body must be a JSON object'.",
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "Omar Tabsh - Add Threat - Duplicate Indicator (rejected)",
           "request": {
             "method": "POST",
@@ -662,6 +695,31 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Omar Tabsh - Unknown Endpoint (JSON 404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": "{{threats_url}}/threatz",
+            "description": "A wrong URL returns a JSON error instead of an HTML page."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
                 ]
               }
             }
