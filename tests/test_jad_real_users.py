@@ -16,6 +16,18 @@ from services.playbooks.app import create_app as playbooks
 from services.threat_intelligence.app import create_app as threats
 from services.security_reports.app import create_app as reports
 from tests.test_integration import LiveServer
+import pytest
+
+
+def test_team_launcher_refuses_legacy_fixture_without_changing_it(tmp_path):
+    path=tmp_path/'legacy.db'
+    with sqlite3.connect(path) as conn:
+        conn.execute('CREATE TABLE users(user_id INTEGER PRIMARY KEY, username TEXT)')
+        conn.execute("INSERT INTO users VALUES(1,'keep_me')")
+    with pytest.raises(RuntimeError,match='older fixture database'):
+        prepare_database(path)
+    with sqlite3.connect(path) as conn:
+        assert conn.execute('SELECT username FROM users').fetchall()==[('keep_me',)]
 
 
 def test_real_users_login_assets_and_jad_services(tmp_path, monkeypatch):
