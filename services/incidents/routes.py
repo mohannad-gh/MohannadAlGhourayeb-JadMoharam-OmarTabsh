@@ -23,7 +23,7 @@ def create():
         deny('Users cannot report incidents under another identity')
     user(reporter)
     asset = integer(data['asset_id'], 'asset_id')
-    repo().one('SELECT asset_id FROM assets WHERE asset_id=?', (asset,), 'Asset not found')
+    repo().asset(asset)
     values = (text(data['title'], 'title', 200), text(data['description'], 'description'),
               enum(data['category'], 'category', CATEGORIES), enum(data['severity'], 'severity', SEVERITIES),
               reporter, asset, now())

@@ -39,7 +39,22 @@ class JadRepository:
         Path(path).resolve().parent.mkdir(parents=True, exist_ok=True)
         schema = Path(__file__).resolve().parents[1] / 'database/schema_jad_moharam.sql'
         with self.connect() as conn:
-            conn.executescript(schema.read_text(encoding='utf-8'))
+            # Mohannad's SQLAlchemy models use id; earlier shared fixtures use user_id/asset_id.
+            self.user_key = self.primary_key(conn, 'users', 'user_id')
+            self.asset_key = self.primary_key(conn, 'assets', 'asset_id')
+            sql = schema.read_text(encoding='utf-8')
+            sql = sql.replace('REFERENCES users(user_id)', f'REFERENCES users({self.user_key})')
+            sql = sql.replace('REFERENCES assets(asset_id)', f'REFERENCES assets({self.asset_key})')
+            conn.executescript(sql)
+
+    @staticmethod
+    def primary_key(conn, table, legacy):
+        columns = {row['name'] for row in conn.execute(f'PRAGMA table_info({table})')}
+        return 'id' if 'id' in columns and legacy not in columns else legacy
+
+    def asset(self, asset_id):
+        return self.one(f'SELECT {self.asset_key} AS asset_id FROM assets WHERE {self.asset_key}=?',
+                        (asset_id,), 'Asset not found')
 
     @contextmanager
     def connect(self, write=False):
@@ -110,7 +125,8 @@ def body(required, optional=()):
 
 def user(user_id, active=True):
     integer(user_id, 'user_id')
-    row = repo().one('SELECT user_id,username,role,account_status FROM users WHERE user_id=?',
+    key = repo().user_key
+    row = repo().one(f'SELECT {key} AS user_id,username,role,account_status FROM users WHERE {key}=?',
                      (user_id,), 'User not found')
     role_names = {'Security Administrator': 'admin', 'Security Analyst': 'analyst',
                   'Regular Employee/User': 'user', 'Regular User': 'user', 'Auditor': 'auditor'}

@@ -14,7 +14,10 @@ from flask_jwt_extended import (
 from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 
-from models import db, User
+if __package__:
+    from .models import db, User
+else:
+    from models import db, User
 
 
 # ==========================================
@@ -33,7 +36,7 @@ if not app.config["JWT_SECRET_KEY"]:
 
 jwt = JWTManager(app)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("TEAM_DATABASE_URI", "sqlite:///users.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)

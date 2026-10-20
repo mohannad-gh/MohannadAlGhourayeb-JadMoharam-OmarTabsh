@@ -14,6 +14,8 @@ Shared conventions (ports, tokens, audit events, response format) are in
 
 ## Setup
 
+The `jad-moharam` branch now includes the latest `main` and Mohannad's submitted Users/Assets. After setup, run `python -m scripts.run_team_services` to start all eight available services on ports 5001-5006 and 5008-5009 using one fresh shared database. Service 7 is still pending. Real password login is verified with Jad's services; see [current integration details](docs/JAD_INTEGRATION_NOTES.md).
+
 Run from the project root:
 
 ```bash
@@ -39,8 +41,7 @@ python -m services.threat_intelligence.app  # http://127.0.0.1:5004
 python -m services.security_reports.app     # http://127.0.0.1:5006
 ```
 
-- **Tokens:** use `POST /users/login`. Until the Users service is merged,
-  `python -m scripts.dev_token` prints a development token for each role.
+- **Tokens:** use the actual `POST /users/login`. `python -m scripts.dev_token` is only for isolated development fixtures.
 - **Postman:** import `postman/OmarTabsh-Services.postman_collection.json` and fill in
   the token variables and `service_key`.
 - **Automated tests:** `python -m pytest`
@@ -71,6 +72,4 @@ Start Omar's Audit Logging service, then run Jad's services from a second termin
 - [Verification results](docs/JAD_VERIFICATION.md)
 
 Import `postman/JadMoharam-Services.postman_collection.json` for the 47 ordered
-requests. A separate, ignored `database/jad_demo.db` provides development fixtures
-until Mohannad's real user/asset services are integrated; it does not implement
-his services. Real Postman screenshots and real-login evidence remain to be collected.
+requests. A separate, ignored `database/jad_demo.db` remains available for historical fixture-based tests. Use the team launcher with a fresh shared database for real Users/Assets integration. Native Postman screenshots of all 18 Jad operations and a sanitized real-login integration execution log accompany the shared report under `submission/`.

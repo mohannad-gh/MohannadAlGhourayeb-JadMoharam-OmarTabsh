@@ -1,5 +1,15 @@
 # Verification — Jad Moharam
 
+## Current integrated version
+
+After merging main `3484a7c` and Mohannad Users/Assets `601de89`, the complete suite passed **219 tests in 28.98 seconds**. This includes a new 31-request real HTTP integration test using Mohannad password registration/login, his Assets API, all three Jad services, Omar Audit/Threats/Reports, and one fresh shared SQLite database.
+
+Verified: successful password login for all four roles, invalid-password 401, suspended-login 403, incident ownership and lifecycle, assignment notification, playbook action completion, summary/asset/incident report success, revoked-role and suspended-account token rejection, bcrypt password storage, and SQLite foreign-key consistency. Vulnerabilities is still absent and its report returns the expected 503. Passwords and access tokens are redacted in `submission/evidence/real-team-integration.json`.
+
+The 47-request native Postman run and screenshots remain valid evidence of the earlier recorded Jad API execution. They are not represented as a new native Postman run against Mohannad's code. The latest real integration evidence is explicitly labeled HTTP test output.
+
+## Earlier version at f0f9959
+
 On 20 October 2026, the complete combined suite passed: **210 tests in 23.18 seconds**.
 
 Command: `python -m pytest -q --tb=short` (the verification run also selected a temporary workspace directory and exported a JUnit log).
