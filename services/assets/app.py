@@ -98,22 +98,35 @@ def validate_asset_fields(data, partial=False):
             if field not in data or data[field] is None:
                 return f"{field} is required"
 
-    for field in [
-        "asset_name", "asset_type", "department"
-    ]:
+    for field in ["asset_name", "asset_type", "department"]:
         if field in data:
             if not isinstance(data[field], str) or not data[field].strip():
                 return f"{field} must be a non-empty string"
+
+            max_length = {
+                "asset_name": 150,
+                "asset_type": 80,
+                "department": 100
+            }[field]
+
+            if len(data[field].strip()) > max_length:
+                return f"{field} is too long"
 
     if "owner_id" in data:
         if type(data["owner_id"]) is not int or data["owner_id"] <= 0:
             return "owner_id must be a positive integer"
 
     if "criticality" in data:
+        if not isinstance(data["criticality"], str):
+            return "Invalid criticality level"
+
         if data["criticality"] not in ALLOWED_CRITICALITY:
             return "Invalid criticality level"
 
     if "status" in data:
+        if not isinstance(data["status"], str):
+            return "Invalid asset status"
+
         if data["status"] not in ALLOWED_STATUSES:
             return "Invalid asset status"
 
@@ -186,6 +199,7 @@ def register_asset():
         }), 409
 
     ip_value = data.get("ip_address")
+
     if isinstance(ip_value, str):
         ip_value = ip_value.strip() or None
 
@@ -240,7 +254,134 @@ def get_all_assets():
 
 
 # ==========================================
-# 6. RETRIEVE ASSET BY ID
+# 6. SEARCH ASSETS
+# GET /assets/search
+# ==========================================
+
+@app.route("/assets/search", methods=["GET"])
+@jwt_required()
+def search_assets():
+
+    if not role_can_view_assets():
+        return jsonify({
+            "message": "You do not have permission to search assets"
+        }), 403
+
+    allowed_filters = {
+        "asset_name",
+        "asset_type",
+        "department",
+        "criticality",
+        "status",
+        "owner_id"
+    }
+
+    # Check for unsupported search parameters
+    for key in request.args:
+        if key not in allowed_filters:
+            return jsonify({
+                "message": f"Unsupported search filter: {key}"
+            }), 400
+
+    if not request.args:
+        return jsonify({
+            "message": "At least one search filter is required"
+        }), 400
+
+    query = Asset.query
+
+    # Partial, case-insensitive asset name search
+    if "asset_name" in request.args:
+        name = request.args.get("asset_name", "").strip()
+
+        if not name:
+            return jsonify({
+                "message": "asset_name cannot be empty"
+            }), 400
+
+        query = query.filter(
+            Asset.asset_name.ilike(f"%{name}%")
+        )
+
+    # Filter by asset type
+    if "asset_type" in request.args:
+        asset_type = request.args["asset_type"].strip()
+
+        if not asset_type:
+            return jsonify({
+                "message": "asset_type cannot be empty"
+            }), 400
+
+        query = query.filter(
+            Asset.asset_type.ilike(asset_type)
+        )
+
+    # Filter by department
+    if "department" in request.args:
+        department = request.args["department"].strip()
+
+        if not department:
+            return jsonify({
+                "message": "department cannot be empty"
+            }), 400
+
+        query = query.filter(
+            Asset.department.ilike(department)
+        )
+
+    # Filter by criticality
+    if "criticality" in request.args:
+        criticality = request.args["criticality"]
+
+        if criticality not in ALLOWED_CRITICALITY:
+            return jsonify({
+                "message": "Invalid criticality level"
+            }), 400
+
+        query = query.filter_by(criticality=criticality)
+
+    # Filter by status
+    if "status" in request.args:
+        status = request.args["status"]
+
+        if status not in ALLOWED_STATUSES:
+            return jsonify({
+                "message": "Invalid asset status"
+            }), 400
+
+        query = query.filter_by(status=status)
+
+    # Filter by owner
+    if "owner_id" in request.args:
+        raw_id = request.args["owner_id"]
+
+        try:
+            owner_id = int(raw_id)
+
+            if owner_id <= 0:
+                raise ValueError
+
+        except ValueError:
+            return jsonify({
+                "message": "owner_id must be a positive integer"
+            }), 400
+
+        query = query.filter_by(owner_id=owner_id)
+
+    # Execute search
+    assets = query.order_by(Asset.id).all()
+
+    return jsonify({
+        "message": "Asset search completed successfully",
+        "total_results": len(assets),
+        "assets": [
+            asset_to_dict(asset) for asset in assets
+        ]
+    }), 200
+
+
+# ==========================================
+# 7. RETRIEVE ASSET BY ID
 # GET /assets/<id>
 # ==========================================
 
@@ -267,7 +408,7 @@ def get_asset_by_id(id):
 
 
 # ==========================================
-# 7. UPDATE ASSET
+# 8. UPDATE ASSET
 # PUT /assets/<id>
 # ==========================================
 
@@ -346,7 +487,7 @@ def update_asset(id):
 
 
 # ==========================================
-# 8. DELETE ASSET
+# 9. DELETE ASSET
 # DELETE /assets/<id>
 # ==========================================
 
@@ -354,13 +495,11 @@ def update_asset(id):
 @jwt_required()
 def delete_asset(id):
 
-    # Only administrators may delete assets
     if not role_can_manage_assets():
         return jsonify({
             "message": "You do not have permission to delete assets"
         }), 403
 
-    # Find requested asset
     asset = db.session.get(Asset, id)
 
     if not asset:
@@ -371,12 +510,10 @@ def delete_asset(id):
     deleted_asset_id = asset.id
     deleted_asset_name = asset.asset_name
 
-    # Delete from database
     db.session.delete(asset)
 
     try:
         db.session.commit()
-
     except IntegrityError:
         db.session.rollback()
         return jsonify({
@@ -391,7 +528,7 @@ def delete_asset(id):
 
 
 # ==========================================
-# 9. RUN FLASK APPLICATION
+# 10. RUN FLASK APPLICATION
 # ==========================================
 
 if __name__ == "__main__":
