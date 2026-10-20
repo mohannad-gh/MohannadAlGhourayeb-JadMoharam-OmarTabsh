@@ -2,9 +2,9 @@
 
 ## Current integrated version
 
-After merging main `3484a7c` and Mohannad Users/Assets `601de89`, the complete suite passed **220 tests in 29.40 seconds**. This includes a new 31-request real HTTP integration test using Mohannad password registration/login, his Assets API, all three Jad services, Omar Audit/Threats/Reports, and one fresh shared SQLite database.
+After merging main `3484a7c` and Mohannad Users/Assets `601de89`, the complete suite passed **220 tests in 30.04 seconds**. This includes a new 33-request real HTTP integration test using Mohannad password registration/login, his Assets API, all three Jad services, Omar Audit/Threats/Reports, and one fresh shared SQLite database.
 
-Verified: successful password login for all four roles, invalid-password 401, suspended-login 403, incident ownership and lifecycle, assignment notification, playbook action completion, summary/asset/incident report success, revoked-role and suspended-account token rejection, bcrypt password storage, and SQLite foreign-key consistency. Vulnerabilities is still absent and its report returns the expected 503. Passwords and access tokens are redacted in `submission/evidence/real-team-integration.json`.
+Verified: successful password login for all four roles, invalid-password 401, suspended-login 403, incident ownership and lifecycle, assignment notification, playbook action completion, summary/asset/incident report success, revoked-role and suspended-account token rejection, bcrypt password storage, and SQLite foreign-key consistency. The newest run also creates a real vulnerability, checks Asset search and successfully generates the vulnerability report. Passwords and access tokens are redacted in `submission/evidence/real-team-integration.json`.
 
 The 47-request native Postman run and screenshots remain valid evidence of the earlier recorded Jad API execution. They are not represented as a new native Postman run against Mohannad's code. The latest real integration evidence is explicitly labeled HTTP test output.
 

@@ -36,6 +36,7 @@ def test_real_users_login_assets_and_jad_services(tmp_path, monkeypatch):
     monkeypatch.setenv('JWT_SECRET_KEY', config.JWT_SECRET_KEY)
     users_module = importlib.import_module('services.users.app')
     assets_module = importlib.import_module('services.assets.app')
+    vulnerabilities_module = importlib.import_module('services.vulnerabilities.app')
     servers=[]; evidence=[]
     session=requests.Session();session.trust_env=False
     def serve(app):
@@ -53,12 +54,13 @@ def test_real_users_login_assets_and_jad_services(tmp_path, monkeypatch):
         return data
     try:
         users=serve(users_module.app);assets=serve(assets_module.app)
+        vulnerability=serve(vulnerabilities_module.app)
         log=serve(logs({'DATABASE_PATH':str(path)}))
         notice=serve(notifications({'DATABASE_PATH':str(path),'LOGS_SERVICE_URL':log}))
         incident=serve(incidents({'DATABASE_PATH':str(path),'LOGS_SERVICE_URL':log,'NOTIFICATIONS_SERVICE_URL':notice}))
         playbook=serve(playbooks({'DATABASE_PATH':str(path),'LOGS_SERVICE_URL':log}))
         threat=serve(threats({'DATABASE_PATH':str(path),'LOGS_SERVICE_URL':log}))
-        report=serve(reports({'LOGS_SERVICE_URL':log,'SERVICE_URLS':{'users':users,'assets':assets,'incidents':incident,'threats':threat,'logs':log,'vulnerabilities':'http://127.0.0.1:9'}}))
+        report=serve(reports({'LOGS_SERVICE_URL':log,'SERVICE_URLS':{'users':users,'assets':assets,'incidents':incident,'threats':threat,'logs':log,'vulnerabilities':vulnerability}}))
         ids={};tokens={}
         for name,role in [('admin','Security Administrator'),('analyst','Security Analyst'),('employee','Regular User'),('auditor','Auditor')]:
             data=call(users,'POST','/users/register',201,{'full_name':'Team '+name,'username':'team_'+name,'email':name+'@example.test','password':'LocalEvidence2026!','department':'Security'})
@@ -70,6 +72,8 @@ def test_real_users_login_assets_and_jad_services(tmp_path, monkeypatch):
         call(users,'POST','/users/login',401,{'username':'team_employee','password':'IncorrectPassword!'})
         data=call(assets,'POST','/assets',201,{'asset_name':'Real team workstation','asset_type':'Workstation','department':'Security','owner_id':ids['employee'],'criticality':'High'},tokens['admin'])
         asset_id=data['asset']['asset_id']
+        call(assets,'GET','/assets/search?criticality=High',200,token=tokens['auditor'])
+        call(vulnerability,'POST','/vulnerabilities',201,{'title':'Team verification vulnerability','description':'Isolated integration record','asset_id':asset_id,'severity':'High','cve_id':'CVE-2026-12345','cvss_score':8.1},tokens['admin'])
         data=call(incident,'POST','/incidents',201,{'title':'Real login incident','description':'Integration with submitted Users and Assets','category':'Phishing','severity':'High','asset_id':asset_id},tokens['employee'])
         iid=data['data']['incident_id']
         call(incident,'PUT',f'/incidents/{iid}/assign',200,{'analyst_id':ids['analyst']},tokens['admin'])
@@ -90,7 +94,8 @@ def test_real_users_login_assets_and_jad_services(tmp_path, monkeypatch):
         assert data['data']['users']==4 and data['data']['assets']==1
         call(report,'GET','/reports/assets',200,token=tokens['auditor'])
         call(report,'GET','/reports/incidents',200,token=tokens['auditor'])
-        call(report,'GET','/reports/vulnerabilities',503,token=tokens['auditor'])
+        data=call(report,'GET','/reports/vulnerabilities',200,token=tokens['auditor'])
+        assert data['data']['total_vulnerabilities']==1
         with sqlite3.connect(path) as conn:conn.execute("UPDATE users SET account_status='Suspended' WHERE id=?",(ids['employee'],))
         call(users,'POST','/users/login',403,{'username':'team_employee','password':'LocalEvidence2026!'})
         call(incident,'GET',f'/incidents/{iid}',401,token=tokens['employee'])

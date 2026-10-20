@@ -15,7 +15,7 @@ All 18 required APIs are implemented and covered by permission and behavior test
 - [x] Local Windows environment, separate demo fixtures and ignored secrets/tokens.
 - [x] Real HTTP integration checks with Omar's Audit and Reports services.
 - [x] Integrate submitted Users/Assets with id-column compatibility and shared launch; test real password login.
-- [ ] Mohannad completes Vulnerabilities, Asset search, audit production and SQLAlchemy FK enforcement.
+- [ ] Mohannad reviews vulnerability lifecycle/creation permissions, audit production and SQLAlchemy FK enforcement.
 - [ ] Team confirms the read-only shared-table lookup described in integration notes.
 - [ ] Confirm full-name route interpretation and optional prefix.
 - [x] Actual Jad Postman and database screenshots in the student's environment.

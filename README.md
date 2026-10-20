@@ -14,7 +14,7 @@ Shared conventions (ports, tokens, audit events, response format) are in
 
 ## Setup
 
-The `jad-moharam` branch now includes the latest `main` and Mohannad's submitted Users/Assets. After setup, run `python -m scripts.run_team_services` to start all eight available services on ports 5001-5006 and 5008-5009 using one fresh shared database. Service 7 is still pending. Real password login is verified with Jad's services; see [current integration details](docs/JAD_INTEGRATION_NOTES.md).
+The `jad-moharam` branch now includes the latest `main` and Mohannad's submitted Users/Assets. After setup, run `python -m scripts.run_team_services` to start all nine available services on ports 5001-5006 and 5008-5009 using one fresh shared database. Service 7 and Asset search are now supplied by follow-up commit 21ad9fc. Real password login is verified with Jad's services; see [current integration details](docs/JAD_INTEGRATION_NOTES.md).
 
 Run from the project root:
 

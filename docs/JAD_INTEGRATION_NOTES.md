@@ -13,7 +13,7 @@ Jad uses `common.auth`, `common.roles`, `common.responses`, `common.audit_client
 
 ## What to coordinate with Mohannad
 
-Mohannad's Users and Assets commit `601de89` is now merged with its authorship preserved. Vulnerabilities remains unavailable. Jad's integration changes to his apps are limited to package-safe model imports and an optional `TEAM_DATABASE_URI`; his endpoint logic is retained.
+Mohannad's Users and Assets commit `601de89` is now merged with its authorship preserved. Follow-up commit 21ad9fc supplies Vulnerabilities and Asset search and is also integrated. Jad's integration changes to his apps are limited to package-safe model imports and an optional `TEAM_DATABASE_URI`; his endpoint logic is retained.
 
 Expected shared tables:
 
@@ -24,13 +24,13 @@ assets(id PRIMARY KEY, ...)                               # Mohannad model
 
 Jad automatically recognizes the actual `id` keys and the earlier `user_id`/`asset_id` fixture keys. On a fresh shared database its schema creates foreign keys to the detected columns. Existing demo databases are not migrated into real Users databases: use a fresh database for team setup. JWTs may use Omar's claims or Mohannad's flask_jwt_extended `sub` identity and full role titles. Account status must be `Active`; stale roles are rejected. This is verified using real password login over HTTP.
 
-Start the eight available services with `python -m scripts.run_team_services`. It creates the real SQLAlchemy Users/Assets tables before the Jad tables and gives every service the same absolute database path and private secrets. Standalone Users/Assets launches retain their old separate database defaults when `TEAM_DATABASE_URI` is absent. There is no public endpoint to promote an account to administrator; administrator provisioning remains a team deployment decision.
+Start the nine available services with `python -m scripts.run_team_services`. It creates the real SQLAlchemy Users/Assets tables before the Jad tables and gives every service the same absolute database path and private secrets. Standalone Users/Assets launches retain their old separate database defaults when `TEAM_DATABASE_URI` is absent. There is no public endpoint to promote an account to administrator; administrator provisioning remains a team deployment decision.
 
 **A proposed difference from Omar's contract:** his document says other services' data is always read through APIs. Jad currently reads only user identity/status/role and asset existence from the common SQLite schema for authorization and foreign-key validation. It never writes those tables outside the separate demo seeder. This avoids inventing user endpoints analysts are not allowed to call. Confirm these read-only lookups with the team, or replace the `user()`/asset lookup with Mohannad's agreed internal verification API once he supplies it.
 
 All five domain tables, plus execution history and an outbox, are in `database/schema_jad_moharam.sql`; service initialization adapts its legacy FK column names for Mohannad's real schema. Jad apps do not create users/assets tables. A missing or incompatible teammate schema returns 503. Jad connections enforce SQLite foreign keys. Mohannad must also enable foreign-key enforcement on his SQLAlchemy connections before relying on deletion restrictions; the current integration test checks consistency without deleting referenced parents.
 
-Current teammate gaps include Service 7, the sixth Asset search operation, Users/Assets audit events, and Threat/Vulnerability producers calling the notification API. These are not claimed as completed by this integration change. The summary and asset reports now work with the real supplied services; the vulnerability report still returns 503.
+Current teammate gaps include vulnerability lifecycle and admin-only creation compliance, Users/Assets/Vulnerability audit events, and Threat/Vulnerability producers calling the notification API. These are not claimed as completed by this integration change. The summary and asset reports now work with the real supplied services; the vulnerability report also succeeds after the follow-up merge.
 
 ## Reliable side effects and known limits
 

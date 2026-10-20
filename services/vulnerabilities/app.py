@@ -9,7 +9,10 @@ from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt
 from sqlalchemy.exc import IntegrityError
 
-from models import db, Vulnerability
+if __package__:
+    from .models import db, Vulnerability
+else:
+    from models import db, Vulnerability
 
 
 # ==========================================
@@ -27,9 +30,7 @@ if not app.config["JWT_SECRET_KEY"]:
 
 jwt = JWTManager(app)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "sqlite:///vulnerabilities.db"
-)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("TEAM_DATABASE_URI", "sqlite:///vulnerabilities.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
