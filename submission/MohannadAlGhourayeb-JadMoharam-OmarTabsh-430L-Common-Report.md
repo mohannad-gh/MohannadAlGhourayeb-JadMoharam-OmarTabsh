@@ -9,15 +9,15 @@ Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh
 
 The system centralizes incident reporting, threat information, audit records, notifications and response workflows. Its purpose is to help an organization investigate security events, assign responsibility and retain evidence of actions.
 
-Sprint I is organized as nine Flask services using JSON over HTTP and SQLite persistence. Each team member owns three services. The integrated branch now contains eight services, including Mohannad Al Ghourayeb Users and Assets. Vulnerabilities remains pending.
+Sprint I is organized as nine Flask services using JSON over HTTP and SQLite persistence. Each team member owns three services. The integrated branch now contains nine services, including Mohannad Al Ghourayeb Users and Assets. Vulnerabilities and Asset search are now supplied in Mohannad commit 21ad9fc.
 
-The earlier native Postman evidence uses isolated user and asset fixtures. A newer 31-request HTTP integration run verifies actual password login, real Assets and all three Jad services on one fresh SQLite database. The two evidence runs are identified separately.
+The earlier native Postman evidence uses isolated user and asset fixtures. A newer 33-request HTTP integration run verifies actual password login, real Assets and all three Jad services on one fresh SQLite database. The two evidence runs are identified separately.
 
 ## Implementation and Team Responsibilities Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh
 
 Jad Moharam implemented the six APIs in each of Incidents, Notifications and Playbooks, their database tables, authorization and validation, durable side effects, tests, documentation and the Postman collection. Omar Tabsh implemented Threat Intelligence, Audit Logging, Security Reports and the shared authentication, configuration and audit helpers.
 
-Mohannad Al Ghourayeb owns Users and Identity, Assets and Vulnerabilities. His Users and Assets commit 601de89 is now integrated with original authorship preserved. Vulnerabilities and the sixth Asset search operation are still pending.
+Mohannad Al Ghourayeb owns Users and Identity, Assets and Vulnerabilities. His Users and Assets commit 601de89 is now integrated with original authorship preserved. His follow-up 21ad9fc adds Vulnerabilities and Asset search; endpoint-level requirement review remains necessary.
 
 The updated combined automated suite passed 220 tests; the JUnit results accompany the report. The separate native Postman run executed 47 Jad requests with 141 passing assertions, zero failures and zero errors. A later real HTTP run of Omar services produced all 20 expected statuses, including three explicit missing dependency errors.
 
@@ -28,8 +28,8 @@ The updated combined automated suite passed 220 tests; the JUnit results accompa
 | 3 Incidents 5003 | Jad Moharam | 6 APIs and native Postman evidence |
 | 4 Threat Intelligence 5004 | Omar Tabsh | 6 APIs and actual HTTP evidence |
 | 5 Audit Logging 5005 | Omar Tabsh | 6 APIs and actual HTTP evidence |
-| 6 Security Reports 5006 | Omar Tabsh | Summary and Assets now verified with real services; Vulnerabilities pending |
-| 7 Vulnerabilities 5007 | Mohannad Al Ghourayeb | Pending implementation and evidence |
+| 6 Security Reports 5006 | Omar Tabsh | Summary Assets Incidents and Vulnerabilities verified with real services |
+| 7 Vulnerabilities 5007 | Mohannad Al Ghourayeb | 6 routes supplied; real HTTP creation and report verified |
 | 8 Notifications 5008 | Jad Moharam | 6 APIs and native Postman evidence |
 | 9 Playbooks 5009 | Jad Moharam | 6 APIs and native Postman evidence |
 
@@ -122,7 +122,7 @@ Admin deletion creates a new LOG_DELETED record identifying the deletion. The lo
 
 Reports compute results at request time from other services using HTTP and the caller token. Admin and Auditor can access reports. Each successful report includes generated_at and data_sources. No reports table is created.
 
-The earlier isolated Omar run generated incident, threat and activity reports and captured dependency errors. The newer real team integration also successfully generated summary and asset reports. Only Vulnerabilities remains unavailable. Historical 503 screenshots retain their original results.
+The earlier isolated Omar run generated incident, threat and activity reports and captured dependency errors. The newer real team integration also successfully generated summary and asset reports. The latest run also verifies the actual Vulnerabilities service and its report. Historical 503 screenshots retain their original results.
 
 Source unreachable returns 503; a bad or rejected source response returns 502. The isolated report process uses port 5106; unavailable source ports 5191, 5192 and 5197 deliberately identify the unimplemented dependencies.
 
@@ -132,24 +132,24 @@ Source unreachable returns 503; a bad or rejected source response returns 502. T
 | /reports/incidents | Incidents; counts by severity and lifecycle status | 200 actual incident data |
 | /reports/assets | Assets; critical asset list, types and criticality | 200 in newer real-login integration |
 | /reports/threats | Threats; severity, type and five recent indicators | 200 actual threat data |
-| /reports/vulnerabilities | Vulnerabilities; severity, status and critical list | 503 Vulnerabilities dependency unavailable |
+| /reports/vulnerabilities | Vulnerabilities; severity, status and critical list | 200 in newest nine-service integration |
 | /reports/activity | Logs; activities, login events and unauthorized attempts | 200 actual audit data |
 
 ## Users Assets and Vulnerabilities Integration Mohannad Al Ghourayeb
 
-Users and Assets are now integrated from Mohannad commit 601de89. His original route logic is retained; Jad added package imports and an optional shared database URI. The current integration verifies bcrypt password login and actual asset creation. The earlier screenshots still use fixtures and are labeled separately.
+Users and Assets are integrated from Mohannad commit 601de89; follow-up 21ad9fc supplies Asset search and Vulnerabilities. His original route logic is retained; Jad added package imports and an optional shared database URI. The current integration verifies bcrypt password login and actual asset creation. The earlier screenshots still use fixtures and are labeled separately.
 
 Users must store profile data, hashed passwords, role and Active/Inactive/Suspended account status. Login must verify the password hash, reject inactive or suspended accounts, and issue the agreed JWT claims. Users and auditors have only the access allowed by the assignment.
 
 Assets must retain identification, ownership, type and criticality and satisfy incident and vulnerability relationships. Vulnerabilities must retain CVE, CVSS, severity, affected asset and discovery source, and enforce Open -> Under Investigation -> In Progress -> Resolved -> Closed.
 
-Before final submission, Mohannad must complete Vulnerabilities, Asset search, audit events and SQLAlchemy foreign key enforcement, and provide native Postman evidence for his complete assignment. The real summary and asset reports now work; Vulnerabilities still returns 503.
+Before final submission, Mohannad should verify the required vulnerability lifecycle including Under Investigation, admin-only vulnerability creation, discovery/resolution fields, audit events and SQLAlchemy foreign key enforcement. Current code supplies all 18 route operations; native Postman evidence remains required. The real vulnerability report now succeeds.
 
 | Service | Required routes | Evidence status |
 |---|---|---|
 | 1 Users | POST /users/register; POST /users/login; PUT /users/{id}; DELETE /users/{id}; GET /users; GET /users/{username} | 6 source operations; HTTP login verified |
-| 2 Assets | POST /assets; PUT /assets/{id}; DELETE /assets/{id}; GET /assets; GET /assets/{id}; search still missing | 5 source operations; HTTP create verified |
-| 7 Vulnerabilities | POST /vulnerabilities; GET /vulnerabilities; GET /vulnerabilities/{id}; PUT /vulnerabilities/{id}; GET /vulnerabilities/search; DELETE /vulnerabilities/{id} | Pending |
+| 2 Assets | POST /assets; PUT /assets/{id}; DELETE /assets/{id}; GET /assets; GET /assets/{id}; GET /assets/search | 6 source operations; HTTP create and search verified |
+| 7 Vulnerabilities | POST /vulnerabilities; GET /vulnerabilities; GET /vulnerabilities/{id}; PUT /vulnerabilities/{id}; GET /vulnerabilities/search; DELETE /vulnerabilities/{id} | 6 source operations; HTTP create/report verified |
 
 ## Database Design and Relationships Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh
 
@@ -219,7 +219,7 @@ The table and API screenshots below retain the earlier captured history. The cur
 
 1. Final Project Fall 2026-2027 Sprint 1 assignment supplied by the team. Used for service allocation, endpoints, permissions, report structure and evidence requirements.
 
-2. Earlier native Postman evidence uses commit f0f9959. The current source adds merged main 3484a7c, Mohannad 601de89 and Jad real-login integration fixes. API contracts are included in docs/JAD_API_DOCUMENTATION.md and docs/OMAR_TABSH_API_DOCUMENTATION.md. The source archive includes the current integrated code.
+2. Earlier native Postman evidence uses commit f0f9959. The current source adds merged main 3484a7c, Mohannad 601de89 and 21ad9fc and Jad real-login integration fixes. API contracts are included in docs/JAD_API_DOCUMENTATION.md and docs/OMAR_TABSH_API_DOCUMENTATION.md. The source archive includes the current integrated code.
 
 3. Postman collection schemas and local mode documentation: https://learning.postman.com/docs/use/use-collections/collections-schemas/ and https://learning.postman.com/latest-v-12/docs/use/native-git/setup . Used to prepare and execute the actual native collection.
 
@@ -227,7 +227,7 @@ The table and API screenshots below retain the earlier captured history. The cur
 
 5. Evidence provenance: native Postman requests ran on 20 October 2026 at 23:19 Beirut time. Original screenshots are framed to exclude unrelated app chrome; response pixels and results are unchanged. Actual SQLite backups follow each recorded request. The manifest has 48 entries because assignment triggered one additional notification HTTP call.
 
-6. Omar evidence consists of actual HTTP calls viewed through a local evidence page, not native Postman screenshots. Three report successes and three dependency failures are distinguished. Vulnerabilities, the remaining teammate endpoints, native Postman login/Omar captures and native GitHub website screenshots remain to be completed. The new real-login HTTP execution is included separately.
+6. Omar evidence consists of actual HTTP calls viewed through a local evidence page, not native Postman screenshots. Three report successes and three dependency failures are distinguished. Remaining teammate validation and audit work, native Postman login/Omar captures and native GitHub website screenshots remain to be completed. The new real-login HTTP execution is included separately.
 
 ## Create Notification Jad Moharam
 
@@ -519,13 +519,13 @@ Actual authenticated GitHub API data displayed in the local viewer. Consecutive 
 
 ## Current Real Login Integration Verification Jad Moharam
 
-The updated branch merges the latest main and Mohannad Users and Assets while preserving their authorship. A shared launcher creates the real SQLAlchemy tables before starting the eight available services. Jad supports their id primary keys and the earlier fixture key names. His endpoint business logic is retained.
+The updated branch merges the latest main and Mohannad Users and Assets while preserving their authorship. A shared launcher creates the real SQLAlchemy tables before starting the nine available services. Jad supports their id primary keys and the earlier fixture key names. His endpoint business logic is retained.
 
-The updated full suite passed 220 tests. The new integration test sends 31 actual HTTP requests using bcrypt password login for all four roles, then exercises Incidents, Notifications, Playbooks and Omar reports. It also checks invalid passwords, suspended accounts, stale roles and database foreign key consistency.
+The updated full suite passed 220 tests. The new integration test sends 33 actual HTTP requests using bcrypt password login for all four roles, then exercises Incidents, Notifications, Playbooks and Omar reports. It also checks invalid passwords, suspended accounts, stale roles and database foreign key consistency.
 
 Actual sanitized execution evidence is included in evidence/real-team-integration.json. Passwords and bearer tokens are redacted. The test roles are provisioned locally after registration; no public administrator promotion endpoint was introduced. The result is HTTP integration evidence, not a native Postman capture.
 
-Remaining teammate work includes Vulnerabilities, Asset search, Users/Assets audit production, notification producers and SQLAlchemy foreign key enforcement. The vulnerability report still returns 503. The branch is prepared for teammate review; main is not merged automatically.
+Remaining teammate work includes vulnerability lifecycle/permission review, audit production, notification producers, SQLAlchemy foreign key enforcement and native Postman evidence. The actual vulnerability report now returns 200. The branch is prepared for teammate review; main is not merged automatically.
 
 ## Real Integration Actual HTTP Results 1 Jad Moharam
 
@@ -543,12 +543,13 @@ Remaining teammate work includes Vulnerabilities, Asset search, Users/Assets aud
 | 8 POST /users/login | 200 | Login successful |
 | 9 POST /users/login | 401 | Invalid username or password |
 | 10 POST /assets | 201 | Asset registered successfully |
-| 11 POST /incidents | 201 | Incident created |
-| 12 PUT /incidents/1/assign | 200 | Incident assigned |
-| 13 GET /notifications/user/2 | 200 | Notifications retrieved |
-| 14 GET /incidents/1 | 200 |  |
-| 15 GET /incidents | 403 | User does not have permission to perform this operation |
-| 16 PUT /incidents/1/status | 200 | Incident status updated |
+| 11 GET /assets/search?criticality=High | 200 | Asset search completed successfully |
+| 12 POST /vulnerabilities | 201 | Vulnerability registered successfully |
+| 13 POST /incidents | 201 | Incident created |
+| 14 PUT /incidents/1/assign | 200 | Incident assigned |
+| 15 GET /notifications/user/2 | 200 | Notifications retrieved |
+| 16 GET /incidents/1 | 200 |  |
+| 17 GET /incidents | 403 | User does not have permission to perform this operation |
 
 ## Real Integration Actual HTTP Results 2 Jad Moharam
 
@@ -556,18 +557,29 @@ Remaining teammate work includes Vulnerabilities, Asset search, Users/Assets aud
 
 | Request | Actual status | Response message |
 |---|---|---|
-| 17 PUT /incidents/1/status | 200 | Incident status updated |
 | 18 PUT /incidents/1/status | 200 | Incident status updated |
 | 19 PUT /incidents/1/status | 200 | Incident status updated |
-| 20 POST /incidents/1/notes | 201 | Investigation note added |
-| 21 POST /playbooks | 201 | Playbook created |
-| 22 POST /playbooks/1/actions | 201 | Response action added |
-| 23 PUT /actions/1/status | 200 | Response action updated |
-| 24 PUT /actions/1/status | 200 | Response action updated |
-| 25 GET /reports/summary | 200 | Security Summary Report generated successfully |
-| 26 GET /reports/assets | 200 | Asset Report generated successfully |
-| 27 GET /reports/incidents | 200 | Incident Report generated successfully |
-| 28 GET /reports/vulnerabilities | 503 | Could not generate the Vulnerability Report: The Vulnerability Management service is not reachable at http://127.0.0.1:9/vulnerabilities. Make sure it is running |
-| 29 POST /users/login | 403 | Account is inactive or suspended |
-| 30 GET /incidents/1 | 401 | Authenticated account is missing or inactive |
-| 31 GET /playbooks/1 | 401 | Account role changed; log in again |
+| 20 PUT /incidents/1/status | 200 | Incident status updated |
+| 21 PUT /incidents/1/status | 200 | Incident status updated |
+| 22 POST /incidents/1/notes | 201 | Investigation note added |
+| 23 POST /playbooks | 201 | Playbook created |
+| 24 POST /playbooks/1/actions | 201 | Response action added |
+| 25 PUT /actions/1/status | 200 | Response action updated |
+| 26 PUT /actions/1/status | 200 | Response action updated |
+| 27 GET /reports/summary | 200 | Security Summary Report generated successfully |
+| 28 GET /reports/assets | 200 | Asset Report generated successfully |
+| 29 GET /reports/incidents | 200 | Incident Report generated successfully |
+| 30 GET /reports/vulnerabilities | 200 | Vulnerability Report generated successfully |
+| 31 POST /users/login | 403 | Account is inactive or suspended |
+| 32 GET /incidents/1 | 401 | Authenticated account is missing or inactive |
+| 33 GET /playbooks/1 | 401 | Account role changed; log in again |
+
+## Users Assets and Vulnerabilities Database Entities Mohannad Al Ghourayeb
+
+These are the actual SQLAlchemy model fields supplied by Mohannad, initialized in the same SQLite file by the team launcher. The full executed DDL is in sql/schema_team_actual.sql. Relationships from assets.owner_id and vulnerabilities.asset_id are currently logical integer links rather than declared SQLAlchemy foreign keys; teammate enforcement review remains necessary.
+
+| Entity | Actual fields | Relationships and review |
+|---|---|---|
+| users | id PK; full_name, username unique, email unique, password_hash, department, role, account_status, created_date, last_login_date | Referenced by Jad reporter, analyst, recipient, author and creator IDs |
+| assets | id PK; asset_name, asset_type, ip_address, department, owner_id, criticality, status, created_date | owner_id logically references users.id; Jad incident asset_id has a database FK |
+| vulnerabilities | id PK; title, description, cve_id, asset_id, severity, cvss_score, status, remediation, discovered_date, updated_date | asset_id logically references assets.id; required lifecycle, permissions and field coverage need teammate review |
