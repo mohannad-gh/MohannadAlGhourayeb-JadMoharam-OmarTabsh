@@ -1,0 +1,789 @@
+{
+  "source_commit": "21ad9fc with Jad import/shared-database integration",
+  "execution": "Actual Flask test-client execution, not native Postman",
+  "records_are_isolated_test_data": true,
+  "core_route_operations": 18,
+  "requests": 30,
+  "findings": [
+    "All 18 required Users/Assets/Vulnerabilities route operations executed successfully using Flask test clients and a fresh real SQLAlchemy database.",
+    "Vulnerabilities rejects the required Under Investigation status with 400.",
+    "Vulnerabilities permits Open directly to Closed with 200; ordered transitions are not enforced.",
+    "Security Analyst can create vulnerabilities with 201; the per-service assignment specifies administrator-only creation.",
+    "Model/source review: discovery source and resolution date are missing; audit producers and SQLAlchemy foreign-key enforcement remain to be completed."
+  ],
+  "execution_records": [
+    {
+      "service": "users",
+      "method": "POST",
+      "path": "/users/register",
+      "status": 201,
+      "expected_current_behavior": 201,
+      "requirement_probe": false,
+      "request": {
+        "full_name": "Verification admin",
+        "username": "verify_admin",
+        "email": "admin@example.test",
+        "password": "[redacted]",
+        "department": "Security"
+      },
+      "response": {
+        "message": "User registered successfully",
+        "role": "Regular User",
+        "user_id": 1,
+        "username": "verify_admin"
+      }
+    },
+    {
+      "service": "users",
+      "method": "POST",
+      "path": "/users/login",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": {
+        "username": "verify_admin",
+        "password": "[redacted]"
+      },
+      "response": {
+        "access_token": "[redacted]",
+        "message": "Login successful",
+        "role": "Security Administrator",
+        "user_id": 1,
+        "username": "verify_admin"
+      }
+    },
+    {
+      "service": "users",
+      "method": "POST",
+      "path": "/users/register",
+      "status": 201,
+      "expected_current_behavior": 201,
+      "requirement_probe": false,
+      "request": {
+        "full_name": "Verification analyst",
+        "username": "verify_analyst",
+        "email": "analyst@example.test",
+        "password": "[redacted]",
+        "department": "Security"
+      },
+      "response": {
+        "message": "User registered successfully",
+        "role": "Regular User",
+        "user_id": 2,
+        "username": "verify_analyst"
+      }
+    },
+    {
+      "service": "users",
+      "method": "POST",
+      "path": "/users/login",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": {
+        "username": "verify_analyst",
+        "password": "[redacted]"
+      },
+      "response": {
+        "access_token": "[redacted]",
+        "message": "Login successful",
+        "role": "Security Analyst",
+        "user_id": 2,
+        "username": "verify_analyst"
+      }
+    },
+    {
+      "service": "users",
+      "method": "POST",
+      "path": "/users/register",
+      "status": 201,
+      "expected_current_behavior": 201,
+      "requirement_probe": false,
+      "request": {
+        "full_name": "Verification employee",
+        "username": "verify_employee",
+        "email": "employee@example.test",
+        "password": "[redacted]",
+        "department": "Security"
+      },
+      "response": {
+        "message": "User registered successfully",
+        "role": "Regular User",
+        "user_id": 3,
+        "username": "verify_employee"
+      }
+    },
+    {
+      "service": "users",
+      "method": "POST",
+      "path": "/users/login",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": {
+        "username": "verify_employee",
+        "password": "[redacted]"
+      },
+      "response": {
+        "access_token": "[redacted]",
+        "message": "Login successful",
+        "role": "Regular User",
+        "user_id": 3,
+        "username": "verify_employee"
+      }
+    },
+    {
+      "service": "users",
+      "method": "POST",
+      "path": "/users/register",
+      "status": 201,
+      "expected_current_behavior": 201,
+      "requirement_probe": false,
+      "request": {
+        "full_name": "Verification auditor",
+        "username": "verify_auditor",
+        "email": "auditor@example.test",
+        "password": "[redacted]",
+        "department": "Security"
+      },
+      "response": {
+        "message": "User registered successfully",
+        "role": "Regular User",
+        "user_id": 4,
+        "username": "verify_auditor"
+      }
+    },
+    {
+      "service": "users",
+      "method": "POST",
+      "path": "/users/login",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": {
+        "username": "verify_auditor",
+        "password": "[redacted]"
+      },
+      "response": {
+        "access_token": "[redacted]",
+        "message": "Login successful",
+        "role": "Auditor",
+        "user_id": 4,
+        "username": "verify_auditor"
+      }
+    },
+    {
+      "service": "users",
+      "method": "POST",
+      "path": "/users/register",
+      "status": 201,
+      "expected_current_behavior": 201,
+      "requirement_probe": false,
+      "request": {
+        "full_name": "Verification spare",
+        "username": "verify_spare",
+        "email": "spare@example.test",
+        "password": "[redacted]",
+        "department": "Security"
+      },
+      "response": {
+        "message": "User registered successfully",
+        "role": "Regular User",
+        "user_id": 5,
+        "username": "verify_spare"
+      }
+    },
+    {
+      "service": "users",
+      "method": "PUT",
+      "path": "/users/3",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": {
+        "department": "IT"
+      },
+      "response": {
+        "department": "IT",
+        "email": "employee@example.test",
+        "full_name": "Verification employee",
+        "message": "User updated successfully",
+        "user_id": 3
+      }
+    },
+    {
+      "service": "users",
+      "method": "GET",
+      "path": "/users",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": null,
+      "response": {
+        "message": "Users retrieved successfully",
+        "total_users": 5,
+        "users": [
+          {
+            "account_status": "Active",
+            "created_date": "2026-10-20T21:20:40.621523",
+            "department": "Security",
+            "email": "admin@example.test",
+            "full_name": "Verification admin",
+            "last_login_date": "2026-10-20T21:20:40.793499",
+            "role": "Security Administrator",
+            "user_id": 1,
+            "username": "verify_admin"
+          },
+          {
+            "account_status": "Active",
+            "created_date": "2026-10-20T21:20:40.960731",
+            "department": "Security",
+            "email": "analyst@example.test",
+            "full_name": "Verification analyst",
+            "last_login_date": "2026-10-20T21:20:41.133698",
+            "role": "Security Analyst",
+            "user_id": 2,
+            "username": "verify_analyst"
+          },
+          {
+            "account_status": "Active",
+            "created_date": "2026-10-20T21:20:41.300407",
+            "department": "IT",
+            "email": "employee@example.test",
+            "full_name": "Verification employee",
+            "last_login_date": "2026-10-20T21:20:41.469422",
+            "role": "Regular User",
+            "user_id": 3,
+            "username": "verify_employee"
+          },
+          {
+            "account_status": "Active",
+            "created_date": "2026-10-20T21:20:41.635242",
+            "department": "Security",
+            "email": "auditor@example.test",
+            "full_name": "Verification auditor",
+            "last_login_date": "2026-10-20T21:20:41.805510",
+            "role": "Auditor",
+            "user_id": 4,
+            "username": "verify_auditor"
+          },
+          {
+            "account_status": "Active",
+            "created_date": "2026-10-20T21:20:41.974052",
+            "department": "Security",
+            "email": "spare@example.test",
+            "full_name": "Verification spare",
+            "last_login_date": null,
+            "role": "Regular User",
+            "user_id": 5,
+            "username": "verify_spare"
+          }
+        ]
+      }
+    },
+    {
+      "service": "users",
+      "method": "GET",
+      "path": "/users/verify_employee",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": null,
+      "response": {
+        "message": "User retrieved successfully",
+        "user": {
+          "account_status": "Active",
+          "created_date": "2026-10-20T21:20:41.300407",
+          "department": "IT",
+          "email": "employee@example.test",
+          "full_name": "Verification employee",
+          "last_login_date": "2026-10-20T21:20:41.469422",
+          "role": "Regular User",
+          "user_id": 3,
+          "username": "verify_employee"
+        }
+      }
+    },
+    {
+      "service": "users",
+      "method": "DELETE",
+      "path": "/users/5",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": null,
+      "response": {
+        "message": "User deleted successfully",
+        "user_id": 5,
+        "username": "verify_spare"
+      }
+    },
+    {
+      "service": "assets",
+      "method": "POST",
+      "path": "/assets",
+      "status": 201,
+      "expected_current_behavior": 201,
+      "requirement_probe": false,
+      "request": {
+        "asset_name": "Verification workstation 1",
+        "asset_type": "Workstation",
+        "department": "IT",
+        "owner_id": 3,
+        "criticality": "High"
+      },
+      "response": {
+        "asset": {
+          "asset_id": 1,
+          "asset_name": "Verification workstation 1",
+          "asset_type": "Workstation",
+          "created_date": "2026-10-20T21:20:41.991060",
+          "criticality": "High",
+          "department": "IT",
+          "ip_address": null,
+          "owner_id": 3,
+          "status": "Active"
+        },
+        "message": "Asset registered successfully"
+      }
+    },
+    {
+      "service": "assets",
+      "method": "POST",
+      "path": "/assets",
+      "status": 201,
+      "expected_current_behavior": 201,
+      "requirement_probe": false,
+      "request": {
+        "asset_name": "Verification workstation 2",
+        "asset_type": "Workstation",
+        "department": "IT",
+        "owner_id": 3,
+        "criticality": "High"
+      },
+      "response": {
+        "asset": {
+          "asset_id": 2,
+          "asset_name": "Verification workstation 2",
+          "asset_type": "Workstation",
+          "created_date": "2026-10-20T21:20:41.995060",
+          "criticality": "High",
+          "department": "IT",
+          "ip_address": null,
+          "owner_id": 3,
+          "status": "Active"
+        },
+        "message": "Asset registered successfully"
+      }
+    },
+    {
+      "service": "assets",
+      "method": "PUT",
+      "path": "/assets/1",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": {
+        "criticality": "Critical"
+      },
+      "response": {
+        "asset": {
+          "asset_id": 1,
+          "asset_name": "Verification workstation 1",
+          "asset_type": "Workstation",
+          "created_date": "2026-10-20T21:20:41.991060",
+          "criticality": "Critical",
+          "department": "IT",
+          "ip_address": null,
+          "owner_id": 3,
+          "status": "Active"
+        },
+        "message": "Asset updated successfully"
+      }
+    },
+    {
+      "service": "assets",
+      "method": "GET",
+      "path": "/assets",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": null,
+      "response": {
+        "assets": [
+          {
+            "asset_id": 1,
+            "asset_name": "Verification workstation 1",
+            "asset_type": "Workstation",
+            "created_date": "2026-10-20T21:20:41.991060",
+            "criticality": "Critical",
+            "department": "IT",
+            "ip_address": null,
+            "owner_id": 3,
+            "status": "Active"
+          },
+          {
+            "asset_id": 2,
+            "asset_name": "Verification workstation 2",
+            "asset_type": "Workstation",
+            "created_date": "2026-10-20T21:20:41.995060",
+            "criticality": "High",
+            "department": "IT",
+            "ip_address": null,
+            "owner_id": 3,
+            "status": "Active"
+          }
+        ],
+        "message": "Assets retrieved successfully",
+        "total_assets": 2
+      }
+    },
+    {
+      "service": "assets",
+      "method": "GET",
+      "path": "/assets/1",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": null,
+      "response": {
+        "asset": {
+          "asset_id": 1,
+          "asset_name": "Verification workstation 1",
+          "asset_type": "Workstation",
+          "created_date": "2026-10-20T21:20:41.991060",
+          "criticality": "Critical",
+          "department": "IT",
+          "ip_address": null,
+          "owner_id": 3,
+          "status": "Active"
+        },
+        "message": "Asset retrieved successfully"
+      }
+    },
+    {
+      "service": "assets",
+      "method": "GET",
+      "path": "/assets/search?criticality=Critical",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": null,
+      "response": {
+        "assets": [
+          {
+            "asset_id": 1,
+            "asset_name": "Verification workstation 1",
+            "asset_type": "Workstation",
+            "created_date": "2026-10-20T21:20:41.991060",
+            "criticality": "Critical",
+            "department": "IT",
+            "ip_address": null,
+            "owner_id": 3,
+            "status": "Active"
+          }
+        ],
+        "message": "Asset search completed successfully",
+        "total_results": 1
+      }
+    },
+    {
+      "service": "assets",
+      "method": "DELETE",
+      "path": "/assets/2",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": null,
+      "response": {
+        "asset_id": 2,
+        "asset_name": "Verification workstation 2",
+        "message": "Asset deleted successfully"
+      }
+    },
+    {
+      "service": "vulnerabilities",
+      "method": "POST",
+      "path": "/vulnerabilities",
+      "status": 201,
+      "expected_current_behavior": 201,
+      "requirement_probe": false,
+      "request": {
+        "title": "Verification vulnerability 1",
+        "description": "Isolated local verification",
+        "asset_id": 1,
+        "severity": "High",
+        "cve_id": "CVE-2026-12341",
+        "cvss_score": 8.1
+      },
+      "response": {
+        "message": "Vulnerability registered successfully",
+        "vulnerability": {
+          "asset_id": 1,
+          "cve_id": "CVE-2026-12341",
+          "cvss_score": 8.1,
+          "description": "Isolated local verification",
+          "discovered_date": "2026-10-20T21:20:42.009613",
+          "remediation": null,
+          "severity": "High",
+          "status": "Open",
+          "title": "Verification vulnerability 1",
+          "updated_date": "2026-10-20T21:20:42.009613",
+          "vulnerability_id": 1
+        }
+      }
+    },
+    {
+      "service": "vulnerabilities",
+      "method": "POST",
+      "path": "/vulnerabilities",
+      "status": 201,
+      "expected_current_behavior": 201,
+      "requirement_probe": false,
+      "request": {
+        "title": "Verification vulnerability 2",
+        "description": "Isolated local verification",
+        "asset_id": 1,
+        "severity": "High",
+        "cve_id": "CVE-2026-12342",
+        "cvss_score": 8.1
+      },
+      "response": {
+        "message": "Vulnerability registered successfully",
+        "vulnerability": {
+          "asset_id": 1,
+          "cve_id": "CVE-2026-12342",
+          "cvss_score": 8.1,
+          "description": "Isolated local verification",
+          "discovered_date": "2026-10-20T21:20:42.013613",
+          "remediation": null,
+          "severity": "High",
+          "status": "Open",
+          "title": "Verification vulnerability 2",
+          "updated_date": "2026-10-20T21:20:42.013613",
+          "vulnerability_id": 2
+        }
+      }
+    },
+    {
+      "service": "vulnerabilities",
+      "method": "GET",
+      "path": "/vulnerabilities",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": null,
+      "response": {
+        "message": "Vulnerabilities retrieved successfully",
+        "total_vulnerabilities": 2,
+        "vulnerabilities": [
+          {
+            "asset_id": 1,
+            "cve_id": "CVE-2026-12341",
+            "cvss_score": 8.1,
+            "description": "Isolated local verification",
+            "discovered_date": "2026-10-20T21:20:42.009613",
+            "remediation": null,
+            "severity": "High",
+            "status": "Open",
+            "title": "Verification vulnerability 1",
+            "updated_date": "2026-10-20T21:20:42.009613",
+            "vulnerability_id": 1
+          },
+          {
+            "asset_id": 1,
+            "cve_id": "CVE-2026-12342",
+            "cvss_score": 8.1,
+            "description": "Isolated local verification",
+            "discovered_date": "2026-10-20T21:20:42.013613",
+            "remediation": null,
+            "severity": "High",
+            "status": "Open",
+            "title": "Verification vulnerability 2",
+            "updated_date": "2026-10-20T21:20:42.013613",
+            "vulnerability_id": 2
+          }
+        ]
+      }
+    },
+    {
+      "service": "vulnerabilities",
+      "method": "GET",
+      "path": "/vulnerabilities/1",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": null,
+      "response": {
+        "message": "Vulnerability retrieved successfully",
+        "vulnerability": {
+          "asset_id": 1,
+          "cve_id": "CVE-2026-12341",
+          "cvss_score": 8.1,
+          "description": "Isolated local verification",
+          "discovered_date": "2026-10-20T21:20:42.009613",
+          "remediation": null,
+          "severity": "High",
+          "status": "Open",
+          "title": "Verification vulnerability 1",
+          "updated_date": "2026-10-20T21:20:42.009613",
+          "vulnerability_id": 1
+        }
+      }
+    },
+    {
+      "service": "vulnerabilities",
+      "method": "GET",
+      "path": "/vulnerabilities/search?severity=High",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": null,
+      "response": {
+        "message": "Vulnerability search completed successfully",
+        "total_results": 2,
+        "vulnerabilities": [
+          {
+            "asset_id": 1,
+            "cve_id": "CVE-2026-12341",
+            "cvss_score": 8.1,
+            "description": "Isolated local verification",
+            "discovered_date": "2026-10-20T21:20:42.009613",
+            "remediation": null,
+            "severity": "High",
+            "status": "Open",
+            "title": "Verification vulnerability 1",
+            "updated_date": "2026-10-20T21:20:42.009613",
+            "vulnerability_id": 1
+          },
+          {
+            "asset_id": 1,
+            "cve_id": "CVE-2026-12342",
+            "cvss_score": 8.1,
+            "description": "Isolated local verification",
+            "discovered_date": "2026-10-20T21:20:42.013613",
+            "remediation": null,
+            "severity": "High",
+            "status": "Open",
+            "title": "Verification vulnerability 2",
+            "updated_date": "2026-10-20T21:20:42.013613",
+            "vulnerability_id": 2
+          }
+        ]
+      }
+    },
+    {
+      "service": "vulnerabilities",
+      "method": "PUT",
+      "path": "/vulnerabilities/1",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": {
+        "description": "Updated verified record"
+      },
+      "response": {
+        "message": "Vulnerability updated successfully",
+        "vulnerability": {
+          "asset_id": 1,
+          "cve_id": "CVE-2026-12341",
+          "cvss_score": 8.1,
+          "description": "Updated verified record",
+          "discovered_date": "2026-10-20T21:20:42.009613",
+          "remediation": null,
+          "severity": "High",
+          "status": "Open",
+          "title": "Verification vulnerability 1",
+          "updated_date": "2026-10-20T21:20:42.020613",
+          "vulnerability_id": 1
+        }
+      }
+    },
+    {
+      "service": "vulnerabilities",
+      "method": "DELETE",
+      "path": "/vulnerabilities/2",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": false,
+      "request": null,
+      "response": {
+        "asset_id": 1,
+        "message": "Vulnerability deleted successfully",
+        "title": "Verification vulnerability 2",
+        "vulnerability_id": 2
+      }
+    },
+    {
+      "service": "vulnerabilities",
+      "method": "PUT",
+      "path": "/vulnerabilities/1",
+      "status": 400,
+      "expected_current_behavior": 400,
+      "requirement_probe": true,
+      "request": {
+        "status": "Under Investigation"
+      },
+      "response": {
+        "message": "Invalid vulnerability status"
+      }
+    },
+    {
+      "service": "vulnerabilities",
+      "method": "PUT",
+      "path": "/vulnerabilities/1",
+      "status": 200,
+      "expected_current_behavior": 200,
+      "requirement_probe": true,
+      "request": {
+        "status": "Closed"
+      },
+      "response": {
+        "message": "Vulnerability updated successfully",
+        "vulnerability": {
+          "asset_id": 1,
+          "cve_id": "CVE-2026-12341",
+          "cvss_score": 8.1,
+          "description": "Updated verified record",
+          "discovered_date": "2026-10-20T21:20:42.009613",
+          "remediation": null,
+          "severity": "High",
+          "status": "Closed",
+          "title": "Verification vulnerability 1",
+          "updated_date": "2026-10-20T21:20:42.028613",
+          "vulnerability_id": 1
+        }
+      }
+    },
+    {
+      "service": "vulnerabilities",
+      "method": "POST",
+      "path": "/vulnerabilities",
+      "status": 201,
+      "expected_current_behavior": 201,
+      "requirement_probe": true,
+      "request": {
+        "title": "Analyst creation probe",
+        "description": "Checks administrator-only creation requirement",
+        "asset_id": 1,
+        "severity": "Low"
+      },
+      "response": {
+        "message": "Vulnerability registered successfully",
+        "vulnerability": {
+          "asset_id": 1,
+          "cve_id": null,
+          "cvss_score": null,
+          "description": "Checks administrator-only creation requirement",
+          "discovered_date": "2026-10-20T21:20:42.032044",
+          "remediation": null,
+          "severity": "Low",
+          "status": "Open",
+          "title": "Analyst creation probe",
+          "updated_date": "2026-10-20T21:20:42.032044",
+          "vulnerability_id": 2
+        }
+      }
+    }
+  ]
+}

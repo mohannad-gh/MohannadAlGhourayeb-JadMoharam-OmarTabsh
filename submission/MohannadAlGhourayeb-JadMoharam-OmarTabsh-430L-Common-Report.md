@@ -145,6 +145,8 @@ Assets must retain identification, ownership, type and criticality and satisfy i
 
 Before final submission, Mohannad should verify the required vulnerability lifecycle including Under Investigation, admin-only vulnerability creation, discovery/resolution fields, audit events and SQLAlchemy foreign key enforcement. Current code supplies all 18 route operations; native Postman evidence remains required. The real vulnerability report now succeeds.
 
+A separate 30-request Flask test-client verification executed all 18 of Mohannad route operations successfully. Requirement probes confirmed that Under Investigation is rejected, Open can jump directly to Closed, and an Analyst can create vulnerabilities. These are remaining compliance issues rather than missing route files. Full sanitized results are in evidence/mohannad-api-verification.json.
+
 | Service | Required routes | Evidence status |
 |---|---|---|
 | 1 Users | POST /users/register; POST /users/login; PUT /users/{id}; DELETE /users/{id}; GET /users; GET /users/{username} | 6 source operations; HTTP login verified |
