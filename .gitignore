@@ -226,3 +226,4 @@ database/*.db
 *.db-wal
 *.db-shm
 .claude/
+postman/*.local.postman_environment.json
