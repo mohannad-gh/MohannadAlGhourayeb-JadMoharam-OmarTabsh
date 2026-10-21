@@ -1,0 +1,1315 @@
+[
+  {
+    "title": "Security Incident Detection and Response Management System",
+    "owner": "Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh",
+    "paras": [],
+    "rows": null,
+    "columns": null,
+    "image": null,
+    "kind": "cover"
+  },
+  {
+    "title": "Table of Contents",
+    "owner": "Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh",
+    "paras": [],
+    "rows": null,
+    "columns": null,
+    "image": null,
+    "kind": "toc"
+  },
+  {
+    "title": "Introduction and System Architecture",
+    "owner": "Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh",
+    "paras": [
+      "The system centralizes incident reporting, threat information, audit records, notifications and response workflows. Its purpose is to help an organization investigate security events, assign responsibility and retain evidence of actions.",
+      "Sprint I is organized as nine Flask services using JSON over HTTP and SQLite persistence. Each team member owns three services. The integrated branch now contains nine services, including Mohannad Al Ghourayeb Users and Assets. Vulnerabilities and Asset search are now supplied in Mohannad commit 21ad9fc.",
+      "The earlier native Postman evidence uses isolated user and asset fixtures. A newer 33-request HTTP integration run verifies actual password login, real Assets and all three Jad services on one fresh SQLite database. The two evidence runs are identified separately."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": null,
+    "kind": "architecture"
+  },
+  {
+    "title": "Implementation and Team Responsibilities",
+    "owner": "Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh",
+    "paras": [
+      "Jad Moharam implemented the six APIs in each of Incidents, Notifications and Playbooks, their database tables, authorization and validation, durable side effects, tests, documentation and the Postman collection. Omar Tabsh implemented Threat Intelligence, Audit Logging, Security Reports and the shared authentication, configuration and audit helpers.",
+      "Mohannad Al Ghourayeb owns Users and Identity, Assets and Vulnerabilities. His Users and Assets commit 601de89 is now integrated with original authorship preserved. His follow-up 21ad9fc adds Vulnerabilities and Asset search.",
+      "The updated combined automated suite passed 220 tests; the JUnit results accompany the report. The separate native Postman run executed 47 Jad requests with 141 passing assertions, zero failures and zero errors. A later real HTTP run of Omar services produced all 20 expected statuses, including three explicit missing dependency errors."
+    ],
+    "rows": [
+      [
+        "1 Users 5001",
+        "Mohannad Al Ghourayeb",
+        "Users supplied; real password login verified over HTTP"
+      ],
+      [
+        "2 Assets 5002",
+        "Mohannad Al Ghourayeb",
+        "Assets supplied; creation verified over HTTP"
+      ],
+      [
+        "3 Incidents 5003",
+        "Jad Moharam",
+        "6 APIs and native Postman evidence"
+      ],
+      [
+        "4 Threat Intelligence 5004",
+        "Omar Tabsh",
+        "6 APIs and actual HTTP evidence"
+      ],
+      [
+        "5 Audit Logging 5005",
+        "Omar Tabsh",
+        "6 APIs and actual HTTP evidence"
+      ],
+      [
+        "6 Security Reports 5006",
+        "Omar Tabsh",
+        "Summary Assets Incidents and Vulnerabilities verified with real services"
+      ],
+      [
+        "7 Vulnerabilities 5007",
+        "Mohannad Al Ghourayeb",
+        "6 routes supplied; real HTTP creation and report verified"
+      ],
+      [
+        "8 Notifications 5008",
+        "Jad Moharam",
+        "6 APIs and native Postman evidence"
+      ],
+      [
+        "9 Playbooks 5009",
+        "Jad Moharam",
+        "6 APIs and native Postman evidence"
+      ]
+    ],
+    "columns": [
+      "Service and port",
+      "Owner",
+      "Current evidence"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "Incident Management API Documentation",
+    "owner": "Jad Moharam",
+    "paras": [
+      "Incidents store the reporter, affected asset, assigned analyst, severity and lifecycle timestamps. Users create their own reports and view their own incidents. Analysts view and update assigned incidents. Administrators assign analysts; administrators and auditors can list all incidents.",
+      "Example POST body: {\"title\":\"Suspicious email\",\"description\":\"Investigate sender\",\"category\":\"Phishing\",\"severity\":\"High\",\"asset_id\":1}. Assignment: {\"analyst_id\":2}. Note: {\"content\":\"Headers preserved\"}. Status: {\"status\":\"Under Investigation\"}.",
+      "Lifecycle: Open -> Under Investigation -> Mitigated -> Resolved -> Closed. Skips, reversals and repeats return 400. Existing users/assets are checked. Assignment requires audit availability, then queues the notification. Body values cannot override server identity or timestamps."
+    ],
+    "rows": [
+      [
+        "POST /incidents",
+        "title, description, category, severity, asset_id; optional reporter_id",
+        "201 complete incident; 400 validation; 403 own reporter rule"
+      ],
+      [
+        "GET /incidents",
+        "Admin or Auditor token",
+        "200 data array and count; 403 other roles"
+      ],
+      [
+        "GET /incidents/{id}",
+        "Positive ID and permitted identity",
+        "200 incident and notes; 403 ownership; 404 absent"
+      ],
+      [
+        "PUT /incidents/{id}/assign",
+        "analyst_id, active Analyst; Admin",
+        "200 assigned incident; 409 same assignment; 503 audit unavailable"
+      ],
+      [
+        "PUT /incidents/{id}/status",
+        "status; Admin or assigned Analyst",
+        "200 updated incident; 400 invalid transition"
+      ],
+      [
+        "POST /incidents/{id}/notes",
+        "content; Admin or assigned Analyst",
+        "201 note; 400 blank; 403 unauthorized"
+      ]
+    ],
+    "columns": [
+      "Method and endpoint",
+      "Inputs",
+      "Success and error behavior"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "Notification and Alert API Documentation",
+    "owner": "Jad Moharam",
+    "paras": [
+      "Notifications preserve a user recipient, title, message, type, severity, Unread or Read status and timestamps. Analyst and User access is restricted to the recipient. Admin and authorized services can create notifications. Only Admin can delete.",
+      "Create body: {\"user_id\":3,\"title\":\"Security alert\",\"message\":\"Review suspicious email\",\"type\":\"Security Alert\",\"severity\":\"High\"}. Search example: /notifications/search?user_id=3&severity=High&status=Read. Types include Incident Assignment, Security Alert, System Notification, Threat Alert and Vulnerability Alert.",
+      "The read operation needs no body and preserves the original read timestamp on repeats. Search filters combine with AND and reject unknown or repeated parameters. An existing user with no notifications receives 200 and an empty array."
+    ],
+    "rows": [
+      [
+        "POST /notifications",
+        "user_id, title, message, type, severity; Admin or service key",
+        "201 notification; 400 invalid recipient or type"
+      ],
+      [
+        "GET /notifications/user/{user_id}",
+        "Admin/Auditor; Analyst/User own only",
+        "200 list and count; 403 cross user"
+      ],
+      [
+        "GET /notifications/{id}",
+        "Admin/Auditor; Analyst/User own only",
+        "200 notification; 403 denied; 404 absent"
+      ],
+      [
+        "PUT /notifications/{id}/read",
+        "Admin or recipient Analyst/User; no body",
+        "200 Read notification and read_at"
+      ],
+      [
+        "GET /notifications/search",
+        "user_id, type, severity, status; Admin/Analyst/Auditor",
+        "200 filtered array; Analyst own only; 400 bad filter"
+      ],
+      [
+        "DELETE /notifications/{id}",
+        "Admin; no body",
+        "200 deleted notification_id; 403 denied; 404 absent"
+      ]
+    ],
+    "columns": [
+      "Method and endpoint",
+      "Inputs and roles",
+      "Result"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "Playbooks and Response API Documentation",
+    "owner": "Jad Moharam",
+    "paras": [
+      "Playbooks group ordered response actions. Admin creates and deletes playbooks; Admin, Analyst and Auditor can read them. Admin and Analyst can create and progress actions. Records preserve actor identity and action history after deletion.",
+      "Playbook body: {\"name\":\"Phishing response\",\"description\":\"Investigate\",\"incident_category\":\"Phishing\",\"severity\":\"High\"}. Action: {\"description\":\"Preserve malicious email\",\"step_number\":1,\"assigned_user_id\":2}. Update: {\"status\":\"In Progress\"} then {\"status\":\"Completed\"}.",
+      "Names are case insensitive and unique. Steps are consecutive positive integers unique within a playbook. Pending -> In Progress -> Completed is enforced. Progress requires an active eligible assignee and completed preceding steps. Completed actions cannot change. Explicit completion time must be timezone aware and not in the future."
+    ],
+    "rows": [
+      [
+        "POST /playbooks",
+        "name, description, incident_category, severity; Admin",
+        "201 playbook; 409 duplicate name"
+      ],
+      [
+        "GET /playbooks",
+        "Admin, Analyst, Auditor",
+        "200 list; 403 User"
+      ],
+      [
+        "GET /playbooks/{id}",
+        "Admin, Analyst, Auditor",
+        "200 actions, history, progress; 404 absent"
+      ],
+      [
+        "POST /playbooks/{id}/actions",
+        "description, step_number, optional assigned_user_id",
+        "201 action; 409 duplicate step; 400 invalid order"
+      ],
+      [
+        "PUT /actions/{id}/status",
+        "status, assigned_user_id and/or completed_at",
+        "200 updated action; 400 invalid workflow"
+      ],
+      [
+        "DELETE /playbooks/{id}",
+        "Admin",
+        "200 deleted playbook_id; history retained"
+      ]
+    ],
+    "columns": [
+      "Method and endpoint",
+      "Inputs and role",
+      "Result"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "Threat Intelligence API Documentation",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Threat Intelligence maintains IP Address, Domain, File Hash, Malware Signature and Other indicators. Values are validated by type and severity is Low, Medium, High or Critical. The unique type and value pair prevents duplicate indicators.",
+      "Create example: {\"threat_type\":\"Domain\",\"threat_value\":\"sprint-evidence.example\",\"description\":\"Development evidence indicator\",\"severity\":\"High\",\"source\":\"Team local test\"}. Update: {\"severity\":\"Critical\",\"description\":\"Confirmed development indicator\"}.",
+      "Admin modifies records. Admin, Analyst and Auditor retrieve all or specific records; search follows the per-service requirement and allows Admin and Analyst. Type and value are immutable during updates. Successful changes emit audit events. The HTTP evidence uses port 5104 to isolate it from normal port 5004."
+    ],
+    "rows": [
+      [
+        "POST /threats",
+        "threat_type, threat_value, description, severity, source",
+        "201 created; 400 validation; 409 duplicate"
+      ],
+      [
+        "GET /threats",
+        "No body",
+        "200 list and count"
+      ],
+      [
+        "GET /threats/{id}",
+        "Positive ID",
+        "200 threat; 404 absent"
+      ],
+      [
+        "GET /threats/search",
+        "type/severity exact; value/source partial",
+        "200 matching list; 400 invalid or empty filters"
+      ],
+      [
+        "PUT /threats/{id}",
+        "description, severity and/or source",
+        "200 record and previous_values; last_updated set"
+      ],
+      [
+        "DELETE /threats/{id}",
+        "Admin token",
+        "200 deleted record; 403 unauthorized"
+      ]
+    ],
+    "columns": [
+      "Method and endpoint",
+      "Parameters",
+      "Result"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "Security Audit Logging API Documentation",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Audit Logging stores security activities with actor, action, description, UTC timestamp, severity and originating service. Admin or trusted services create logs. Existing records cannot be updated: HTTP update methods return 405, and a SQLite trigger rejects UPDATE.",
+      "Create example: {\"user_id\":1,\"action\":\"TEAM_EVIDENCE\",\"description\":\"Common report evidence run\",\"severity\":\"Information\",\"related_service\":\"Users\"}. Service calls use X-Service-Key. The key is absent from the report and screenshots.",
+      "Admin deletion creates a new LOG_DELETED record identifying the deletion. The logical users relationship does not cascade, preserving audit information when accounts change. Evidence port 5105 is separate from normal port 5005."
+    ],
+    "rows": [
+      [
+        "POST /logs",
+        "Admin or service; user_id, action, description, severity, related_service",
+        "201 stored record; server assigns ID and timestamp"
+      ],
+      [
+        "GET /logs",
+        "Admin, Auditor",
+        "200 newest first"
+      ],
+      [
+        "GET /logs/{id}",
+        "Admin, Auditor, Analyst",
+        "200 record; 404 absent"
+      ],
+      [
+        "GET /logs/search",
+        "Admin, Auditor, Analyst; user/date/action/severity/service",
+        "200 matches; 400 bad filter or date"
+      ],
+      [
+        "DELETE /logs/{id}",
+        "Admin",
+        "200 deleted record and deletion audit event"
+      ],
+      [
+        "GET /logs/user/{user_id}",
+        "Admin, Auditor",
+        "200 matching records or empty array"
+      ]
+    ],
+    "columns": [
+      "Method and endpoint",
+      "Roles and parameters",
+      "Result"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "Security Reports API Documentation",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Reports compute results at request time from other services using HTTP and the caller token. Admin and Auditor can access reports. Each successful report includes generated_at and data_sources. No reports table is created.",
+      "The earlier isolated Omar run generated incident, threat and activity reports and captured dependency errors. The newer real team integration also successfully generated summary and asset reports. The latest run also verifies the actual Vulnerabilities service and its report. Historical 503 screenshots retain their original results.",
+      "Source unreachable returns 503; a bad or rejected source response returns 502. The isolated report process uses port 5106; source ports 5191, 5192 and 5197 were deliberately unavailable to test dependency error handling."
+    ],
+    "rows": [
+      [
+        "/reports/summary",
+        "Users, Assets, Incidents, Threats; counts and open incidents",
+        "200 in newer real-login integration"
+      ],
+      [
+        "/reports/incidents",
+        "Incidents; counts by severity and lifecycle status",
+        "200 actual incident data"
+      ],
+      [
+        "/reports/assets",
+        "Assets; critical asset list, types and criticality",
+        "200 in newer real-login integration"
+      ],
+      [
+        "/reports/threats",
+        "Threats; severity, type and five recent indicators",
+        "200 actual threat data"
+      ],
+      [
+        "/reports/vulnerabilities",
+        "Vulnerabilities; severity, status and critical list",
+        "200 in newest nine-service integration"
+      ],
+      [
+        "/reports/activity",
+        "Logs; activities, login events and unauthorized attempts",
+        "200 actual audit data"
+      ]
+    ],
+    "columns": [
+      "GET endpoint",
+      "Sources and output",
+      "Observed status"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "Users Assets and Vulnerabilities Integration",
+    "owner": "Mohannad Al Ghourayeb",
+    "paras": [
+      "Users and Assets are integrated from Mohannad commit 601de89; follow-up 21ad9fc supplies Asset search and Vulnerabilities. His original route logic is retained; Jad added package imports and an optional shared database URI. The current integration verifies bcrypt password login and actual asset creation. The earlier screenshots still use fixtures and are labeled separately.",
+      "The Users service stores profile data, bcrypt password hashes, role and account status. The HTTP integration verifies password login, rejection of an invalid password and rejection of suspended accounts. Access is controlled through signed JWT claims.",
+      "Assets retain identification, ownership, type and criticality. Vulnerabilities store CVE, CVSS, severity and the affected asset. The specified vulnerability lifecycle is Open -> Under Investigation -> In Progress -> Resolved -> Closed; the observed implementation behavior is documented below.",
+      "All 18 route operations are present. The vulnerability report returns HTTP 200 in the integrated run. The model stores discovery and update dates; discovery source and a separate resolution date are absent from the current schema.",
+      "A separate 30-request Flask test-client verification executed all 18 of Mohannad route operations successfully. Requirement probes confirmed that Under Investigation is rejected, Open can jump directly to Closed, and an Analyst can create vulnerabilities. These observed results differ from the specified vulnerability lifecycle and administrator-only creation rule. Full sanitized results are in evidence/mohannad-api-verification.json."
+    ],
+    "rows": [
+      [
+        "1 Users",
+        "POST /users/register; POST /users/login; PUT /users/{id}; DELETE /users/{id}; GET /users; GET /users/{username}",
+        "6 source operations; HTTP login verified"
+      ],
+      [
+        "2 Assets",
+        "POST /assets; PUT /assets/{id}; DELETE /assets/{id}; GET /assets; GET /assets/{id}; GET /assets/search",
+        "6 source operations; HTTP create and search verified"
+      ],
+      [
+        "7 Vulnerabilities",
+        "POST /vulnerabilities; GET /vulnerabilities; GET /vulnerabilities/{id}; PUT /vulnerabilities/{id}; GET /vulnerabilities/search; DELETE /vulnerabilities/{id}",
+        "6 source operations; HTTP create/report verified"
+      ]
+    ],
+    "columns": [
+      "Service",
+      "Required routes",
+      "Evidence status"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "Database Design and Relationships",
+    "owner": "Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh",
+    "paras": [
+      "One SQLite file is the team persistence convention. Each service creates its own tables. Jad uses read only checks against users and assets for identity, account status and foreign key validation. The integrated launcher initializes the shared schema before starting the services.",
+      "Primary keys are integer IDs. Incidents reference users as reporter and analyst and assets as the affected resource. Notes reference incidents and their author. Notifications reference recipients. Playbooks reference creators; ordered response actions reference playbooks and assignees. Action history deliberately retains snapshots after deletion.",
+      "Omar owns threats and logs. Threat type plus value is unique. Logs have an UPDATE-blocking trigger and retain a logical user link. Security Reports has no table. Historical screenshot databases use fixture schemas. The new integration database uses Mohannad real SQLAlchemy tables with id primary keys. Jad detects these and creates matching foreign keys; legacy user_id and asset_id fixtures remain supported."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": null,
+    "kind": "schema"
+  },
+  {
+    "title": "Database Entities and Fields",
+    "owner": "Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh",
+    "paras": [],
+    "rows": [
+      [
+        "incidents Jad Moharam",
+        "incident_id PK; reporter_id FK; asset_id FK; assigned_analyst_id FK; title, description, category, severity, status, created_at, resolved_at",
+        "Constrained lifecycle and severity"
+      ],
+      [
+        "investigation_notes Jad Moharam",
+        "note_id PK; incident_id FK; analyst_id FK; content, created_at",
+        "Cascade with parent incident"
+      ],
+      [
+        "notifications Jad Moharam",
+        "notification_id PK; user_id FK; title, message, type, severity, status, created_at, read_at",
+        "Unread to Read; fixed type set"
+      ],
+      [
+        "playbooks Jad Moharam",
+        "playbook_id PK; created_by FK; name, description, incident_category, severity, created_at",
+        "Case insensitive unique name"
+      ],
+      [
+        "response_actions Jad Moharam",
+        "action_id PK; playbook_id FK; assigned_user_id FK; description, step_number, status, completed_at",
+        "Unique playbook and step; cascade parent"
+      ],
+      [
+        "action_history Jad Moharam",
+        "history_id PK; action_id, playbook_id, actor_id; event, old/new status and assignee, description, step, changed_at",
+        "No cascade; evidence retained"
+      ],
+      [
+        "jad_outbox Jad Moharam",
+        "event_id PK; owner_service, kind, payload, created_at, delivered_at, claimed_until",
+        "Durable pending audit/notification delivery"
+      ],
+      [
+        "threats Omar Tabsh",
+        "threat_id PK; type, value, description, severity, source, date_added, last_updated",
+        "Unique type and value"
+      ],
+      [
+        "logs Omar Tabsh",
+        "log_id PK; user_id logical; action, description, timestamp, severity, related_service",
+        "Immutable UPDATE trigger"
+      ]
+    ],
+    "columns": [
+      "Entity and owner",
+      "Key fields",
+      "Rules"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "Error Handling Validation and Access Control",
+    "owner": "Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh",
+    "paras": [
+      "Every protected request verifies a signed, unexpired JWT. Jad additionally verifies the stored active account and current role so token claims cannot preserve revoked permissions. Role and ownership checks happen before protected work. Client-supplied role fields do not grant permission.",
+      "Jad body handlers reject malformed JSON, arrays, empty bodies, unexpected fields, invalid enums, invalid integer identifiers and blank or oversized text. Values are bound as SQL parameters. Server timestamps and authenticated actor IDs are assigned by the service. Omar validates typed threat values and query filters and logs unauthorized access.",
+      "Mutation responses can report warnings for pending side effects. Assignment is cancelled if the required audit dependency is unavailable; other committed side effects use the outbox. Delivery is at least once, so retries may duplicate a remote event after an ambiguous connection failure.",
+      "The native Postman negative cases returned the expected 400, 401, 403, 404 and 409 responses. The screenshots show missing token and insufficient permissions. Newer HTTP integration evidence also verifies successful password login, wrong-password 401 and suspended-account login 403. Password-login results are recorded in the separate HTTP integration log."
+    ],
+    "rows": [
+      [
+        "Security Administrator",
+        "Manage incidents, notifications, playbooks, threats and logs; read reports",
+        "Requires valid active identity in Jad services"
+      ],
+      [
+        "Security Analyst",
+        "Assigned incidents, own notifications, playbooks/actions, threat reads/search, selected logs",
+        "No global incident listing or administrative deletion"
+      ],
+      [
+        "Regular Employee or User",
+        "Own incident reports and own notifications",
+        "No playbook, threat, log or report management"
+      ],
+      [
+        "Auditor",
+        "Read permitted records and reports",
+        "Cannot mutate records; follow per-service role matrix"
+      ]
+    ],
+    "columns": [
+      "Role",
+      "Current permissions",
+      "Important limit"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "GitHub Version Control and Contributions",
+    "owner": "Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh",
+    "paras": [
+      "Repository: https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh",
+      "Development branch: jad-moharam. Pull request: https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/pull/2. Omar original commits are preserved in the merge history. The updated report, screenshots and sanitized integration log are stored under submission on the Jad branch. Original teammate merge history is preserved.",
+      "The evidence JSON was retrieved from the authenticated GitHub REST API. The corresponding HTML and screenshot are explicitly labeled as API data views. The captures reproduce the retrieved commit records and author attribution.",
+      "The table and API screenshots below retain the earlier captured history. The current Jad branch additionally merges main 3484a7c and Mohannad Users/Assets 601de89 and contains the verified integration changes. The report identifies the development branch so its source can be located independently of main."
+    ],
+    "rows": [
+      [
+        "f0f9959",
+        "Jad Moharam",
+        "Implement Jad Moharam services 3, 8 and 9 with all 18 APIs"
+      ],
+      [
+        "f2824d8",
+        "Jad Moharam",
+        "Integrate Omar Tabsh services and shared team interfaces"
+      ],
+      [
+        "db97c2f",
+        "Omar Tabsh",
+        "Document Omar Tabsh's APIs and the team integration contract"
+      ],
+      [
+        "a4b329a",
+        "Omar Tabsh",
+        "Add run/dev-token scripts, database schema and Postman collection"
+      ],
+      [
+        "250293d",
+        "Omar Tabsh",
+        "Implement Security Reports service (Service 6)"
+      ],
+      [
+        "07f06bf",
+        "Omar Tabsh",
+        "Implement Security Audit Logging service (Service 5)"
+      ],
+      [
+        "2a06e9f",
+        "Omar Tabsh",
+        "Implement Threat Intelligence service (Service 4)"
+      ],
+      [
+        "bcc713a",
+        "Omar Tabsh",
+        "Add shared config, JWT authentication, response format and audit client"
+      ],
+      [
+        "a620bce",
+        "Jad Moharam",
+        "Set up Flask and SQLite project with service requirements checklist"
+      ],
+      [
+        "67428ca",
+        "mohannad-gh",
+        "Initial commit"
+      ]
+    ],
+    "columns": [
+      "Commit",
+      "Author",
+      "Change"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "References and Development Assistance",
+    "owner": "Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh",
+    "paras": [
+      "1. Final Project Fall 2026-2027 Sprint 1 assignment supplied by the team. Used for service allocation, endpoints, permissions, report structure and evidence requirements.",
+      "2. Earlier native Postman evidence uses commit f0f9959. The current source adds merged main 3484a7c, Mohannad 601de89 and 21ad9fc and Jad real-login integration fixes. API contracts are included in docs/JAD_API_DOCUMENTATION.md and docs/OMAR_TABSH_API_DOCUMENTATION.md. The source archive includes the current integrated code.",
+      "3. Postman collection schemas and local mode documentation: https://learning.postman.com/docs/use/use-collections/collections-schemas/ and https://learning.postman.com/latest-v-12/docs/use/native-git/setup . Used to prepare and execute the actual native collection.",
+      "4. AI assistance: Codex was used for Jad service implementation, tests, integration, documentation, actual execution automation and report preparation. Omar Git commits disclose Claude co-authorship on shared helpers, services, tests and documentation. This disclosure identifies the assistance used in implementation and documentation.",
+      "5. Evidence provenance: native Postman requests ran on 20 October 2026 at 23:19 Beirut time. Original screenshots are framed to exclude unrelated app chrome; response pixels and results are unchanged. Actual SQLite backups follow each recorded request. The manifest has 48 entries because assignment triggered one additional notification HTTP call.",
+      "6. Omar evidence consists of actual HTTP calls viewed through a local evidence page, not native Postman screenshots. Three report successes and three dependency failures are distinguished. The password-login integration run is documented separately, with its actual request and response results."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "Create Notification",
+    "owner": "Jad Moharam",
+    "paras": [
+      "POST {{notifications_url}}/notifications",
+      "Request JSON: {\"user_id\":3,\"title\":\"Security alert\",\"message\":\"Review suspicious email\",\"type\":\"Security Alert\",\"severity\":\"High\"}"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/01-create-notification.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Retrieve User Notifications",
+    "owner": "Jad Moharam",
+    "paras": [
+      "GET {{notifications_url}}/notifications/user/3",
+      "Request JSON: No request body"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/02-user-notifications.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Retrieve Specific Notification",
+    "owner": "Jad Moharam",
+    "paras": [
+      "GET {{notifications_url}}/notifications/{{notification_id}}",
+      "Request JSON: No request body"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/03-notification-detail.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Mark Notification Read",
+    "owner": "Jad Moharam",
+    "paras": [
+      "PUT {{notifications_url}}/notifications/{{notification_id}}/read",
+      "Request JSON: No request body"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/04-read-notification.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Search Notifications",
+    "owner": "Jad Moharam",
+    "paras": [
+      "GET {{notifications_url}}/notifications/search?user_id=3&type=Security%20Alert&severity=High&status=Read",
+      "Request JSON: No request body"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/05-search-notifications.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Create Incident",
+    "owner": "Jad Moharam",
+    "paras": [
+      "POST {{incidents_url}}/incidents",
+      "Request JSON: {\"title\":\"Suspicious email\",\"description\":\"Investigate a reported phishing message\",\"category\":\"Phishing\",\"severity\":\"High\",\"reporter_id\":3,\"asset_id\":1}"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/06-create-incident.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Retrieve All Incidents",
+    "owner": "Jad Moharam",
+    "paras": [
+      "GET {{incidents_url}}/incidents",
+      "Request JSON: No request body"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/07-list-incidents.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Retrieve Specific Incident",
+    "owner": "Jad Moharam",
+    "paras": [
+      "GET {{incidents_url}}/incidents/{{incident_id}}",
+      "Request JSON: No request body"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/08-incident-detail.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Assign Incident",
+    "owner": "Jad Moharam",
+    "paras": [
+      "PUT {{incidents_url}}/incidents/{{incident_id}}/assign",
+      "Request JSON: {\"analyst_id\":2}"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/09-assign-incident.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Set Incident Under Investigation",
+    "owner": "Jad Moharam",
+    "paras": [
+      "PUT {{incidents_url}}/incidents/{{incident_id}}/status",
+      "Request JSON: {\"status\":\"Under Investigation\"}"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/10-incident-status.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Add Investigation Note",
+    "owner": "Jad Moharam",
+    "paras": [
+      "POST {{incidents_url}}/incidents/{{incident_id}}/notes",
+      "Request JSON: {\"content\":\"Email headers preserved; sender investigated.\"}"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/14-add-note.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Create Playbook",
+    "owner": "Jad Moharam",
+    "paras": [
+      "POST {{playbooks_url}}/playbooks",
+      "Request JSON: {\"name\":\"Phishing response {{$timestamp}}\",\"description\":\"Investigate and isolate affected systems\",\"incident_category\":\"Phishing\",\"severity\":\"High\"}"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/16-create-playbook.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Retrieve All Playbooks",
+    "owner": "Jad Moharam",
+    "paras": [
+      "GET {{playbooks_url}}/playbooks",
+      "Request JSON: No request body"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/17-list-playbooks.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Retrieve Specific Playbook",
+    "owner": "Jad Moharam",
+    "paras": [
+      "GET {{playbooks_url}}/playbooks/{{playbook_id}}",
+      "Request JSON: No request body"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/18-playbook-detail.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Add Response Action",
+    "owner": "Jad Moharam",
+    "paras": [
+      "POST {{playbooks_url}}/playbooks/{{playbook_id}}/actions",
+      "Request JSON: {\"description\":\"Investigate malicious email\",\"step_number\":1,\"assigned_user_id\":2}"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/19-add-action.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Set Action In Progress",
+    "owner": "Jad Moharam",
+    "paras": [
+      "PUT {{playbooks_url}}/actions/{{action_id}}/status",
+      "Request JSON: {\"status\":\"In Progress\"}"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/20-action-status.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Set Action Completed",
+    "owner": "Jad Moharam",
+    "paras": [
+      "PUT {{playbooks_url}}/actions/{{action_id}}/status",
+      "Request JSON: {\"status\":\"Completed\"}"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/21-complete-action.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Missing Token",
+    "owner": "Jad Moharam",
+    "paras": [
+      "GET {{incidents_url}}/incidents",
+      "Request JSON: No request body"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/22-missing-token.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Analyst Cannot List All Incidents",
+    "owner": "Jad Moharam",
+    "paras": [
+      "GET {{incidents_url}}/incidents",
+      "Request JSON: No request body"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/23-forbidden-role.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Delete Notification",
+    "owner": "Jad Moharam",
+    "paras": [
+      "DELETE {{notifications_url}}/notifications/{{notification_id}}",
+      "Request JSON: No request body"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/46-delete-notification.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Delete Playbook",
+    "owner": "Jad Moharam",
+    "paras": [
+      "DELETE {{playbooks_url}}/playbooks/{{playbook_id}}",
+      "Request JSON: No request body"
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/47-delete-playbook.png",
+    "kind": "postman"
+  },
+  {
+    "title": "Database Baseline Before Requests",
+    "owner": "Jad Moharam",
+    "paras": [],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/db-00-before.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Closed Incident Stored in SQLite",
+    "owner": "Jad Moharam",
+    "paras": [],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/db-01-closed-incident.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Investigation Note Stored in SQLite",
+    "owner": "Jad Moharam",
+    "paras": [],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/db-02-note.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Completed Response Action Stored in SQLite",
+    "owner": "Jad Moharam",
+    "paras": [],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/db-05-action-completed.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Playbook Removed After Authorized Deletion",
+    "owner": "Jad Moharam",
+    "paras": [],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/db-07-deleted-playbook.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Add Threat Indicator",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP evidence viewer. Expected and observed HTTP 201."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-01.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Update Threat Information",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP evidence viewer. Expected and observed HTTP 200."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-05.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Create Log Record",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP evidence viewer. Expected and observed HTTP 201."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-06.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Summary Report",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP evidence viewer. Expected and observed HTTP 503."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-11.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Incidents Report",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP evidence viewer. Expected and observed HTTP 200."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-12.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Threats Report Continued 1",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP capture in consecutive sections. HTTP 200. Request 14."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-14-part-1.png",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Threats Report Continued 2",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP capture in consecutive sections. HTTP 200. Request 14."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-14-part-2.png",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Activity Report Continued 1",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP capture in consecutive sections. HTTP 200. Request 16."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-16-part-1.png",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Activity Report Continued 2",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP capture in consecutive sections. HTTP 200. Request 16."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-16-part-2.png",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Reject Regular User Threat Creation",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP evidence viewer. Expected and observed HTTP 403."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-17.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Reject Invalid Domain",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP evidence viewer. Expected and observed HTTP 400."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-18.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Delete Log Record",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP evidence viewer. Expected and observed HTTP 200."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-19.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Delete Threat Indicator",
+    "owner": "Omar Tabsh",
+    "paras": [
+      "Actual HTTP evidence viewer. Expected and observed HTTP 200."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/omar-20.jpg",
+    "kind": "screenshot"
+  },
+  {
+    "title": "GitHub API History Capture 1",
+    "owner": "Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh",
+    "paras": [
+      "Actual authenticated GitHub API data displayed in the local viewer. Consecutive capture section."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/github-history-part-1.png",
+    "kind": "screenshot"
+  },
+  {
+    "title": "GitHub API History Capture 2",
+    "owner": "Mohannad Al Ghourayeb | Jad Moharam | Omar Tabsh",
+    "paras": [
+      "Actual authenticated GitHub API data displayed in the local viewer. Consecutive capture section."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": "evidence/screenshots/github-history-part-2.png",
+    "kind": "screenshot"
+  },
+  {
+    "title": "Integrated System Verification",
+    "owner": "Jad Moharam",
+    "paras": [
+      "The updated branch merges the latest main and Mohannad Users and Assets while preserving their authorship. A shared launcher creates the real SQLAlchemy tables before starting the nine services. Jad supports their id primary keys and the earlier fixture key names. His endpoint business logic is retained.",
+      "The updated full suite passed 220 tests. The new integration test sends 33 actual HTTP requests using bcrypt password login for all four roles, then exercises Incidents, Notifications, Playbooks and Omar reports. It also checks invalid passwords, suspended accounts, stale roles and database foreign key consistency.",
+      "Actual sanitized execution evidence is included in evidence/real-team-integration.json. Passwords and bearer tokens are redacted. The test roles are provisioned locally after registration; no public administrator promotion endpoint was introduced. The result is HTTP integration evidence, not a native Postman capture.",
+      "The integration run confirms vulnerability creation and a successful vulnerability report. Scope limits include the vulnerability lifecycle and creation-role discrepancies recorded in the service verification, logical SQLAlchemy relationships, and alert producers that are not connected to Notifications."
+    ],
+    "rows": null,
+    "columns": null,
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "HTTP Integration Results 1",
+    "owner": "Jad Moharam",
+    "paras": [],
+    "rows": [
+      [
+        "1 POST /users/register",
+        "201",
+        "User registered successfully"
+      ],
+      [
+        "2 POST /users/login",
+        "200",
+        "Login successful"
+      ],
+      [
+        "3 POST /users/register",
+        "201",
+        "User registered successfully"
+      ],
+      [
+        "4 POST /users/login",
+        "200",
+        "Login successful"
+      ],
+      [
+        "5 POST /users/register",
+        "201",
+        "User registered successfully"
+      ],
+      [
+        "6 POST /users/login",
+        "200",
+        "Login successful"
+      ],
+      [
+        "7 POST /users/register",
+        "201",
+        "User registered successfully"
+      ],
+      [
+        "8 POST /users/login",
+        "200",
+        "Login successful"
+      ],
+      [
+        "9 POST /users/login",
+        "401",
+        "Invalid username or password"
+      ],
+      [
+        "10 POST /assets",
+        "201",
+        "Asset registered successfully"
+      ],
+      [
+        "11 GET /assets/search?criticality=High",
+        "200",
+        "Asset search completed successfully"
+      ],
+      [
+        "12 POST /vulnerabilities",
+        "201",
+        "Vulnerability registered successfully"
+      ],
+      [
+        "13 POST /incidents",
+        "201",
+        "Incident created"
+      ],
+      [
+        "14 PUT /incidents/1/assign",
+        "200",
+        "Incident assigned"
+      ],
+      [
+        "15 GET /notifications/user/2",
+        "200",
+        "Notifications retrieved"
+      ],
+      [
+        "16 GET /incidents/1",
+        "200",
+        ""
+      ],
+      [
+        "17 GET /incidents",
+        "403",
+        "User does not have permission to perform this operation"
+      ]
+    ],
+    "columns": [
+      "Request",
+      "Actual status",
+      "Response message"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "HTTP Integration Results 2",
+    "owner": "Jad Moharam",
+    "paras": [],
+    "rows": [
+      [
+        "18 PUT /incidents/1/status",
+        "200",
+        "Incident status updated"
+      ],
+      [
+        "19 PUT /incidents/1/status",
+        "200",
+        "Incident status updated"
+      ],
+      [
+        "20 PUT /incidents/1/status",
+        "200",
+        "Incident status updated"
+      ],
+      [
+        "21 PUT /incidents/1/status",
+        "200",
+        "Incident status updated"
+      ],
+      [
+        "22 POST /incidents/1/notes",
+        "201",
+        "Investigation note added"
+      ],
+      [
+        "23 POST /playbooks",
+        "201",
+        "Playbook created"
+      ],
+      [
+        "24 POST /playbooks/1/actions",
+        "201",
+        "Response action added"
+      ],
+      [
+        "25 PUT /actions/1/status",
+        "200",
+        "Response action updated"
+      ],
+      [
+        "26 PUT /actions/1/status",
+        "200",
+        "Response action updated"
+      ],
+      [
+        "27 GET /reports/summary",
+        "200",
+        "Security Summary Report generated successfully"
+      ],
+      [
+        "28 GET /reports/assets",
+        "200",
+        "Asset Report generated successfully"
+      ],
+      [
+        "29 GET /reports/incidents",
+        "200",
+        "Incident Report generated successfully"
+      ],
+      [
+        "30 GET /reports/vulnerabilities",
+        "200",
+        "Vulnerability Report generated successfully"
+      ],
+      [
+        "31 POST /users/login",
+        "403",
+        "Account is inactive or suspended"
+      ],
+      [
+        "32 GET /incidents/1",
+        "401",
+        "Authenticated account is missing or inactive"
+      ],
+      [
+        "33 GET /playbooks/1",
+        "401",
+        "Account role changed; log in again"
+      ]
+    ],
+    "columns": [
+      "Request",
+      "Actual status",
+      "Response message"
+    ],
+    "image": null,
+    "kind": null
+  },
+  {
+    "title": "Users Assets and Vulnerabilities Database Entities",
+    "owner": "Mohannad Al Ghourayeb",
+    "paras": [
+      "These are the actual SQLAlchemy model fields supplied by Mohannad, initialized in the same SQLite file by the team launcher. The full executed DDL is in sql/schema_team_actual.sql. Relationships from assets.owner_id and vulnerabilities.asset_id are currently logical integer links rather than declared SQLAlchemy foreign keys."
+    ],
+    "rows": [
+      [
+        "users",
+        "id PK; full_name, username unique, email unique, password_hash, department, role, account_status, created_date, last_login_date",
+        "Referenced by Jad reporter, analyst, recipient, author and creator IDs"
+      ],
+      [
+        "assets",
+        "id PK; asset_name, asset_type, ip_address, department, owner_id, criticality, status, created_date",
+        "owner_id logically references users.id; Jad incident asset_id has a database FK"
+      ],
+      [
+        "vulnerabilities",
+        "id PK; title, description, cve_id, asset_id, severity, cvss_score, status, remediation, discovered_date, updated_date",
+        "asset_id logically references assets.id; lifecycle and creation-role discrepancies are recorded in the verification results"
+      ]
+    ],
+    "columns": [
+      "Entity",
+      "Actual fields",
+      "Relationships and constraints"
+    ],
+    "image": null,
+    "kind": null
+  }
+]

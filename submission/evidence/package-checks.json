@@ -1,0 +1,12 @@
+{
+  "database_integrity": "All SQLite files passed PRAGMA integrity_check",
+  "postman_requests": 47,
+  "postman_assertions_passed": 141,
+  "omar_http_expected_results": 20,
+  "pdf_pages": 61,
+  "current_automated_tests": 220,
+  "real_login_http_requests": 33,
+  "course": "EECE 435L",
+  "pdf_cover_github_links": 2,
+  "pdf_visual_review": "All 61 pages rendered and visually inspected; page text checked within bounds"
+}

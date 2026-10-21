@@ -1,0 +1,740 @@
+[
+  {
+    "method": "POST",
+    "path": "/users/register",
+    "request": {
+      "full_name": "Team admin",
+      "username": "team_admin",
+      "email": "admin@example.test",
+      "password": "[redacted]",
+      "department": "Security"
+    },
+    "status": 201,
+    "expected": 201,
+    "response": {
+      "message": "User registered successfully",
+      "role": "Regular User",
+      "user_id": 1,
+      "username": "team_admin"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/users/login",
+    "request": {
+      "username": "team_admin",
+      "password": "[redacted]"
+    },
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "access_token": "[redacted]",
+      "message": "Login successful",
+      "role": "Security Administrator",
+      "user_id": 1,
+      "username": "team_admin"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/users/register",
+    "request": {
+      "full_name": "Team analyst",
+      "username": "team_analyst",
+      "email": "analyst@example.test",
+      "password": "[redacted]",
+      "department": "Security"
+    },
+    "status": 201,
+    "expected": 201,
+    "response": {
+      "message": "User registered successfully",
+      "role": "Regular User",
+      "user_id": 2,
+      "username": "team_analyst"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/users/login",
+    "request": {
+      "username": "team_analyst",
+      "password": "[redacted]"
+    },
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "access_token": "[redacted]",
+      "message": "Login successful",
+      "role": "Security Analyst",
+      "user_id": 2,
+      "username": "team_analyst"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/users/register",
+    "request": {
+      "full_name": "Team employee",
+      "username": "team_employee",
+      "email": "employee@example.test",
+      "password": "[redacted]",
+      "department": "Security"
+    },
+    "status": 201,
+    "expected": 201,
+    "response": {
+      "message": "User registered successfully",
+      "role": "Regular User",
+      "user_id": 3,
+      "username": "team_employee"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/users/login",
+    "request": {
+      "username": "team_employee",
+      "password": "[redacted]"
+    },
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "access_token": "[redacted]",
+      "message": "Login successful",
+      "role": "Regular User",
+      "user_id": 3,
+      "username": "team_employee"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/users/register",
+    "request": {
+      "full_name": "Team auditor",
+      "username": "team_auditor",
+      "email": "auditor@example.test",
+      "password": "[redacted]",
+      "department": "Security"
+    },
+    "status": 201,
+    "expected": 201,
+    "response": {
+      "message": "User registered successfully",
+      "role": "Regular User",
+      "user_id": 4,
+      "username": "team_auditor"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/users/login",
+    "request": {
+      "username": "team_auditor",
+      "password": "[redacted]"
+    },
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "access_token": "[redacted]",
+      "message": "Login successful",
+      "role": "Auditor",
+      "user_id": 4,
+      "username": "team_auditor"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/users/login",
+    "request": {
+      "username": "team_employee",
+      "password": "[redacted]"
+    },
+    "status": 401,
+    "expected": 401,
+    "response": {
+      "message": "Invalid username or password"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/assets",
+    "request": {
+      "asset_name": "Real team workstation",
+      "asset_type": "Workstation",
+      "department": "Security",
+      "owner_id": 3,
+      "criticality": "High"
+    },
+    "status": 201,
+    "expected": 201,
+    "response": {
+      "asset": {
+        "asset_id": 1,
+        "asset_name": "Real team workstation",
+        "asset_type": "Workstation",
+        "created_date": "2026-10-20T20:59:39.889683",
+        "criticality": "High",
+        "department": "Security",
+        "ip_address": null,
+        "owner_id": 3,
+        "status": "Active"
+      },
+      "message": "Asset registered successfully"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/assets/search?criticality=High",
+    "request": null,
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "assets": [
+        {
+          "asset_id": 1,
+          "asset_name": "Real team workstation",
+          "asset_type": "Workstation",
+          "created_date": "2026-10-20T20:59:39.889683",
+          "criticality": "High",
+          "department": "Security",
+          "ip_address": null,
+          "owner_id": 3,
+          "status": "Active"
+        }
+      ],
+      "message": "Asset search completed successfully",
+      "total_results": 1
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/vulnerabilities",
+    "request": {
+      "title": "Team verification vulnerability",
+      "description": "Isolated integration record",
+      "asset_id": 1,
+      "severity": "High",
+      "cve_id": "CVE-2026-12345",
+      "cvss_score": 8.1
+    },
+    "status": 201,
+    "expected": 201,
+    "response": {
+      "message": "Vulnerability registered successfully",
+      "vulnerability": {
+        "asset_id": 1,
+        "cve_id": "CVE-2026-12345",
+        "cvss_score": 8.1,
+        "description": "Isolated integration record",
+        "discovered_date": "2026-10-20T20:59:39.898911",
+        "remediation": null,
+        "severity": "High",
+        "status": "Open",
+        "title": "Team verification vulnerability",
+        "updated_date": "2026-10-20T20:59:39.898911",
+        "vulnerability_id": 1
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/incidents",
+    "request": {
+      "title": "Real login incident",
+      "description": "Integration with submitted Users and Assets",
+      "category": "Phishing",
+      "severity": "High",
+      "asset_id": 1
+    },
+    "status": 201,
+    "expected": 201,
+    "response": {
+      "status": "success",
+      "message": "Incident created",
+      "warnings": [],
+      "data": {
+        "incident_id": 1,
+        "title": "Real login incident",
+        "description": "Integration with submitted Users and Assets",
+        "category": "Phishing",
+        "severity": "High",
+        "reporter_id": 3,
+        "asset_id": 1,
+        "assigned_analyst_id": null,
+        "status": "Open",
+        "created_at": "2026-10-20T20:59:39.905913Z",
+        "resolved_at": null
+      }
+    }
+  },
+  {
+    "method": "PUT",
+    "path": "/incidents/1/assign",
+    "request": {
+      "analyst_id": 2
+    },
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "message": "Incident assigned",
+      "warnings": [],
+      "data": {
+        "incident_id": 1,
+        "title": "Real login incident",
+        "description": "Integration with submitted Users and Assets",
+        "category": "Phishing",
+        "severity": "High",
+        "reporter_id": 3,
+        "asset_id": 1,
+        "assigned_analyst_id": 2,
+        "status": "Open",
+        "created_at": "2026-10-20T20:59:39.905913Z",
+        "resolved_at": null
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/notifications/user/2",
+    "request": null,
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "message": "Notifications retrieved",
+      "count": 1,
+      "data": [
+        {
+          "notification_id": 1,
+          "user_id": 2,
+          "title": "Incident assignment",
+          "message": "You were assigned incident 1: Real login incident",
+          "type": "Incident Assignment",
+          "severity": "High",
+          "status": "Unread",
+          "created_at": "2026-10-20T20:59:39.956255Z",
+          "read_at": null
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/incidents/1",
+    "request": null,
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "data": {
+        "incident_id": 1,
+        "title": "Real login incident",
+        "description": "Integration with submitted Users and Assets",
+        "category": "Phishing",
+        "severity": "High",
+        "reporter_id": 3,
+        "asset_id": 1,
+        "assigned_analyst_id": 2,
+        "status": "Open",
+        "created_at": "2026-10-20T20:59:39.905913Z",
+        "resolved_at": null,
+        "notes": []
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/incidents",
+    "request": null,
+    "status": 403,
+    "expected": 403,
+    "response": {
+      "status": "error",
+      "message": "User does not have permission to perform this operation"
+    }
+  },
+  {
+    "method": "PUT",
+    "path": "/incidents/1/status",
+    "request": {
+      "status": "Under Investigation"
+    },
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "message": "Incident status updated",
+      "warnings": [],
+      "data": {
+        "incident_id": 1,
+        "title": "Real login incident",
+        "description": "Integration with submitted Users and Assets",
+        "category": "Phishing",
+        "severity": "High",
+        "reporter_id": 3,
+        "asset_id": 1,
+        "assigned_analyst_id": 2,
+        "status": "Under Investigation",
+        "created_at": "2026-10-20T20:59:39.905913Z",
+        "resolved_at": null
+      }
+    }
+  },
+  {
+    "method": "PUT",
+    "path": "/incidents/1/status",
+    "request": {
+      "status": "Mitigated"
+    },
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "message": "Incident status updated",
+      "warnings": [],
+      "data": {
+        "incident_id": 1,
+        "title": "Real login incident",
+        "description": "Integration with submitted Users and Assets",
+        "category": "Phishing",
+        "severity": "High",
+        "reporter_id": 3,
+        "asset_id": 1,
+        "assigned_analyst_id": 2,
+        "status": "Mitigated",
+        "created_at": "2026-10-20T20:59:39.905913Z",
+        "resolved_at": null
+      }
+    }
+  },
+  {
+    "method": "PUT",
+    "path": "/incidents/1/status",
+    "request": {
+      "status": "Resolved"
+    },
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "message": "Incident status updated",
+      "warnings": [],
+      "data": {
+        "incident_id": 1,
+        "title": "Real login incident",
+        "description": "Integration with submitted Users and Assets",
+        "category": "Phishing",
+        "severity": "High",
+        "reporter_id": 3,
+        "asset_id": 1,
+        "assigned_analyst_id": 2,
+        "status": "Resolved",
+        "created_at": "2026-10-20T20:59:39.905913Z",
+        "resolved_at": "2026-10-20T20:59:40.029101Z"
+      }
+    }
+  },
+  {
+    "method": "PUT",
+    "path": "/incidents/1/status",
+    "request": {
+      "status": "Closed"
+    },
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "message": "Incident status updated",
+      "warnings": [],
+      "data": {
+        "incident_id": 1,
+        "title": "Real login incident",
+        "description": "Integration with submitted Users and Assets",
+        "category": "Phishing",
+        "severity": "High",
+        "reporter_id": 3,
+        "asset_id": 1,
+        "assigned_analyst_id": 2,
+        "status": "Closed",
+        "created_at": "2026-10-20T20:59:39.905913Z",
+        "resolved_at": "2026-10-20T20:59:40.029101Z"
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/incidents/1/notes",
+    "request": {
+      "content": "Real analyst login verified"
+    },
+    "status": 201,
+    "expected": 201,
+    "response": {
+      "status": "success",
+      "message": "Investigation note added",
+      "warnings": [],
+      "data": {
+        "note_id": 1,
+        "incident_id": 1,
+        "analyst_id": 2,
+        "content": "Real analyst login verified",
+        "created_at": "2026-10-20T20:59:40.066914Z"
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/playbooks",
+    "request": {
+      "name": "Real login playbook",
+      "description": "Team verification",
+      "incident_category": "Phishing",
+      "severity": "High"
+    },
+    "status": 201,
+    "expected": 201,
+    "response": {
+      "status": "success",
+      "message": "Playbook created",
+      "warnings": [],
+      "data": {
+        "playbook_id": 1,
+        "name": "Real login playbook",
+        "description": "Team verification",
+        "incident_category": "Phishing",
+        "severity": "High",
+        "created_by": 1,
+        "created_at": "2026-10-20T20:59:40.084428Z"
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/playbooks/1/actions",
+    "request": {
+      "description": "Investigate email",
+      "step_number": 1,
+      "assigned_user_id": 2
+    },
+    "status": 201,
+    "expected": 201,
+    "response": {
+      "status": "success",
+      "message": "Response action added",
+      "warnings": [],
+      "data": {
+        "action_id": 1,
+        "playbook_id": 1,
+        "description": "Investigate email",
+        "step_number": 1,
+        "status": "Pending",
+        "assigned_user_id": 2,
+        "completed_at": null
+      }
+    }
+  },
+  {
+    "method": "PUT",
+    "path": "/actions/1/status",
+    "request": {
+      "status": "In Progress"
+    },
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "message": "Response action updated",
+      "warnings": [],
+      "data": {
+        "action_id": 1,
+        "playbook_id": 1,
+        "description": "Investigate email",
+        "step_number": 1,
+        "status": "In Progress",
+        "assigned_user_id": 2,
+        "completed_at": null
+      }
+    }
+  },
+  {
+    "method": "PUT",
+    "path": "/actions/1/status",
+    "request": {
+      "status": "Completed"
+    },
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "message": "Response action updated",
+      "warnings": [],
+      "data": {
+        "action_id": 1,
+        "playbook_id": 1,
+        "description": "Investigate email",
+        "step_number": 1,
+        "status": "Completed",
+        "assigned_user_id": 2,
+        "completed_at": "2026-10-20T20:59:40.139727Z"
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/reports/summary",
+    "request": null,
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "message": "Security Summary Report generated successfully",
+      "data": {
+        "users": 4,
+        "assets": 1,
+        "open_incidents": 0,
+        "critical_threats": 0,
+        "definitions": {
+          "open_incidents": "incidents with status Open, Under Investigation, Mitigated",
+          "critical_threats": "threat indicators with severity Critical"
+        },
+        "generated_at": "2026-10-20 20:59:40 UTC",
+        "data_sources": [
+          "Users and Identity Management service: GET http://127.0.0.1:49503/users",
+          "Asset Management service: GET http://127.0.0.1:49504/assets",
+          "Incident Management service: GET http://127.0.0.1:49508/incidents",
+          "Threat Intelligence service: GET http://127.0.0.1:49510/threats"
+        ]
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/reports/assets",
+    "request": null,
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "message": "Asset Report generated successfully",
+      "data": {
+        "total_assets": 1,
+        "critical_assets": 0,
+        "critical_asset_list": [],
+        "assets_by_type": {
+          "Workstation": 1
+        },
+        "assets_by_criticality": {
+          "Low": 0,
+          "Medium": 0,
+          "High": 1,
+          "Critical": 0
+        },
+        "generated_at": "2026-10-20 20:59:40 UTC",
+        "data_sources": [
+          "Asset Management service: GET http://127.0.0.1:49504/assets"
+        ]
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/reports/incidents",
+    "request": null,
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "message": "Incident Report generated successfully",
+      "data": {
+        "total_incidents": 1,
+        "incidents_by_severity": {
+          "Low": 0,
+          "Medium": 0,
+          "High": 1,
+          "Critical": 0
+        },
+        "incidents_by_status": {
+          "Open": 0,
+          "Under Investigation": 0,
+          "Mitigated": 0,
+          "Resolved": 0,
+          "Closed": 1
+        },
+        "generated_at": "2026-10-20 20:59:40 UTC",
+        "data_sources": [
+          "Incident Management service: GET http://127.0.0.1:49508/incidents"
+        ]
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/reports/vulnerabilities",
+    "request": null,
+    "status": 200,
+    "expected": 200,
+    "response": {
+      "status": "success",
+      "message": "Vulnerability Report generated successfully",
+      "data": {
+        "total_vulnerabilities": 1,
+        "vulnerabilities_by_severity": {
+          "Low": 0,
+          "Medium": 0,
+          "High": 1,
+          "Critical": 0
+        },
+        "vulnerabilities_by_status": {
+          "Open": 1,
+          "Under Investigation": 0,
+          "In Progress": 0,
+          "Resolved": 0,
+          "Closed": 0
+        },
+        "critical_vulnerabilities": 0,
+        "critical_vulnerability_list": [],
+        "generated_at": "2026-10-20 20:59:40 UTC",
+        "data_sources": [
+          "Vulnerability Management service: GET http://127.0.0.1:49505/vulnerabilities"
+        ]
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/users/login",
+    "request": {
+      "username": "team_employee",
+      "password": "[redacted]"
+    },
+    "status": 403,
+    "expected": 403,
+    "response": {
+      "message": "Account is inactive or suspended"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/incidents/1",
+    "request": null,
+    "status": 401,
+    "expected": 401,
+    "response": {
+      "status": "error",
+      "message": "Authenticated account is missing or inactive"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/playbooks/1",
+    "request": null,
+    "status": 401,
+    "expected": 401,
+    "response": {
+      "status": "error",
+      "message": "Account role changed; log in again"
+    }
+  }
+]

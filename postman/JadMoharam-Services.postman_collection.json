@@ -1,0 +1,1704 @@
+{
+  "info": {
+    "name": "Jad Moharam - Services 3, 8 and 9",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Run folders in order against the separate demo database or compatible team data. Set tokens from real login for final evidence; temporary development tokens are supported until Mohannad merges Users. No response examples are presented as execution evidence."
+  },
+  "variable": [
+    {
+      "key": "incidents_url",
+      "value": "http://127.0.0.1:5003"
+    },
+    {
+      "key": "notifications_url",
+      "value": "http://127.0.0.1:5008"
+    },
+    {
+      "key": "playbooks_url",
+      "value": "http://127.0.0.1:5009"
+    },
+    {
+      "key": "admin_token",
+      "value": ""
+    },
+    {
+      "key": "analyst_token",
+      "value": ""
+    },
+    {
+      "key": "user_token",
+      "value": ""
+    },
+    {
+      "key": "auditor_token",
+      "value": ""
+    },
+    {
+      "key": "other_user_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1 Notifications",
+      "item": [
+        {
+          "name": "Jad Moharam - Create Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications",
+            "description": "Admin creates a notification. Required: user_id, title, message, type and severity. Authorized services may instead use X-Service-Key. Invalid fields: 400; unknown recipient: 404.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 3,\n  \"title\": \"Security alert\",\n  \"message\": \"Review suspicious email\",\n  \"type\": \"Security Alert\",\n  \"severity\": \"High\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"notification_id\", pm.response.json().data.notification_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Retrieve User Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications/user/3",
+            "description": "Retrieve User Notifications. Expected HTTP 200; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Retrieve Specific Notification",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications/{{notification_id}}",
+            "description": "Retrieve Specific Notification. Expected HTTP 200; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Mark Notification Read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications/{{notification_id}}/read",
+            "description": "Mark Notification Read. Expected HTTP 200; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Search Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications/search?user_id=3&type=Security%20Alert&severity=High&status=Read",
+            "description": "Search Notifications. Expected HTTP 200; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2 Incidents",
+      "item": [
+        {
+          "name": "Jad Moharam - Create Incident",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents",
+            "description": "Admin or regular user creates an incident. Regular users can report only under their own identity. Creates status Open and server timestamp; existing asset and reporter are required.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Suspicious email\",\n  \"description\": \"Investigate a reported phishing message\",\n  \"category\": \"Phishing\",\n  \"severity\": \"High\",\n  \"reporter_id\": 3,\n  \"asset_id\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"incident_id\", pm.response.json().data.incident_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Retrieve All Incidents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditor_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents",
+            "description": "Retrieve All Incidents. Expected HTTP 200; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Retrieve Specific Incident",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}",
+            "description": "Retrieve Specific Incident. Expected HTTP 200; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Assign Incident",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}/assign",
+            "description": "Admin assigns an active analyst. Requires Omar Audit Logging on 5005; 503 cancels assignment if audit authorization fails. Assignment queues a notification on 5008; warning means delivery is saved for retry.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"analyst_id\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Set Incident Under Investigation",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analyst_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}/status",
+            "description": "Set Incident Under Investigation. Expected HTTP 200; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Under Investigation\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Set Incident Mitigated",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analyst_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}/status",
+            "description": "Set Incident Mitigated. Expected HTTP 200; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Mitigated\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Set Incident Resolved",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analyst_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}/status",
+            "description": "Set Incident Resolved. Expected HTTP 200; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Resolved\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Set Incident Closed",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analyst_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}/status",
+            "description": "Set Incident Closed. Expected HTTP 200; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Closed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Add Investigation Note",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analyst_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}/notes",
+            "description": "Add Investigation Note. Expected HTTP 201; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Email headers preserved; sender investigated.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Retrieve Incident with Notes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditor_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}",
+            "description": "Retrieve Incident with Notes. Expected HTTP 200; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3 Playbooks",
+      "item": [
+        {
+          "name": "Jad Moharam - Create Playbook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/playbooks",
+            "description": "Create Playbook. Expected HTTP 201; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Phishing response {{$timestamp}}\",\n  \"description\": \"Investigate and isolate affected systems\",\n  \"incident_category\": \"Phishing\",\n  \"severity\": \"High\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"playbook_id\", pm.response.json().data.playbook_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Retrieve All Playbooks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analyst_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/playbooks",
+            "description": "Retrieve All Playbooks. Expected HTTP 200; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Retrieve Specific Playbook",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditor_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/playbooks/{{playbook_id}}",
+            "description": "Retrieve Specific Playbook. Expected HTTP 200; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Add Response Action",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analyst_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/playbooks/{{playbook_id}}/actions",
+            "description": "Admin/analyst adds the next consecutive step. Positive, unique step_number and nonempty description are required; optional assigned_user_id must be an active admin or analyst.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Investigate malicious email\",\n  \"step_number\": 1,\n  \"assigned_user_id\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"action_id\", pm.response.json().data.action_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Set Action In Progress",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analyst_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/actions/{{action_id}}/status",
+            "description": "Admin/analyst updates status, optional assigned_user_id or completed_at. Progression is Pending -> In Progress -> Completed. Prior steps must be complete. Completion time defaults to server time. History is retained.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Set Action Completed",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analyst_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/actions/{{action_id}}/status",
+            "description": "Admin/analyst updates status, optional assigned_user_id or completed_at. Progression is Pending -> In Progress -> Completed. Prior steps must be complete. Completion time defaults to server time. History is retained.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Completed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4 Negative cases",
+      "item": [
+        {
+          "name": "Jad Moharam - Missing Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{incidents_url}}/incidents",
+            "description": "Missing Token. Expected HTTP 401; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Analyst Cannot List All Incidents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analyst_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents",
+            "description": "Analyst Cannot List All Incidents. Expected HTTP 403; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Other User Cannot Read Incident",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{other_user_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}",
+            "description": "Other User Cannot Read Incident. Expected HTTP 403; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Missing Incident",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/999999",
+            "description": "Missing Incident. Expected HTTP 404; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Invalid Incident Severity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents",
+            "description": "Invalid Incident Severity. Expected HTTP 400; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"X\",\n  \"description\": \"X\",\n  \"category\": \"Malware\",\n  \"severity\": \"Extreme\",\n  \"asset_id\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - User Cannot Assign",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}/assign",
+            "description": "User Cannot Assign. Expected HTTP 403; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"analyst_id\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Invalid Analyst Role",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}/assign",
+            "description": "Invalid Analyst Role. Expected HTTP 400; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"analyst_id\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Reject Backward Lifecycle",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}/status",
+            "description": "Reject Backward Lifecycle. Expected HTTP 400; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Open\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Empty Investigation Note",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{incidents_url}}/incidents/{{incident_id}}/notes",
+            "description": "Empty Investigation Note. Expected HTTP 400; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \" \"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Other User Cannot Read Notification",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{other_user_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications/{{notification_id}}",
+            "description": "Other User Cannot Read Notification. Expected HTTP 403; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Auditor Cannot Mark Read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditor_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications/{{notification_id}}/read",
+            "description": "Auditor Cannot Mark Read. Expected HTTP 403; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Invalid Notification Type",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications",
+            "description": "Invalid Notification Type. Expected HTTP 400; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 3,\n  \"title\": \"X\",\n  \"message\": \"X\",\n  \"type\": \"Email\",\n  \"severity\": \"Low\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Empty Notification Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications",
+            "description": "Empty Notification Request. Expected HTTP 400; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Missing Notification",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications/999999",
+            "description": "Missing Notification. Expected HTTP 404; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - User Cannot Delete Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications/{{notification_id}}",
+            "description": "User Cannot Delete Notification. Expected HTTP 403; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Analyst Cannot Search Others",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analyst_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications/search?user_id=3",
+            "description": "Analyst Cannot Search Others. Expected HTTP 403; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Invalid Notification Filter",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications/search?status=Maybe",
+            "description": "Invalid Notification Filter. Expected HTTP 400; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - User Cannot Access Playbooks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/playbooks",
+            "description": "User Cannot Access Playbooks. Expected HTTP 403; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Missing Playbook",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/playbooks/999999",
+            "description": "Missing Playbook. Expected HTTP 404; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Duplicate Step",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/playbooks/{{playbook_id}}/actions",
+            "description": "Duplicate Step. Expected HTTP 409; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Duplicate\",\n  \"step_number\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Step Gap",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/playbooks/{{playbook_id}}/actions",
+            "description": "Step Gap. Expected HTTP 400; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Gap\",\n  \"step_number\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Invalid Action Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/actions/{{action_id}}/status",
+            "description": "Invalid Action Status. Expected HTTP 400; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Done\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Missing Action",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/actions/999999/status",
+            "description": "Missing Action. Expected HTTP 404; requires the documented role and valid record ownership.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Analyst Cannot Delete Playbook",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analyst_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/playbooks/{{playbook_id}}",
+            "description": "Analyst Cannot Delete Playbook. Expected HTTP 403; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"error\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5 Cleanup",
+      "item": [
+        {
+          "name": "Jad Moharam - Delete Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{notifications_url}}/notifications/{{notification_id}}",
+            "description": "Delete Notification. Expected HTTP 200; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Jad Moharam - Delete Playbook",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{playbooks_url}}/playbooks/{{playbook_id}}",
+            "description": "Delete Playbook. Expected HTTP 200; requires the documented role and valid record ownership."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON response\", () => pm.response.to.be.json);",
+                  "pm.test(\"Response status\", () => pm.expect(pm.response.json().status).to.eql(\"success\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

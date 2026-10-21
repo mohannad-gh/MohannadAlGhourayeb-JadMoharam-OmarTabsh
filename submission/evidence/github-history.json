@@ -1,0 +1,109 @@
+{
+  "source": "https://api.github.com/repos/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commits?sha=jad-moharam",
+  "commits": [
+    {
+      "sha": "f0f995907271ea4513e96ea39da5b19caeba91f8",
+      "author": "Jad Moharam",
+      "date": "2026-10-20T20:04:03Z",
+      "message": "Implement Jad Moharam services 3, 8 and 9 with all 18 APIs",
+      "url": "https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commit/f0f995907271ea4513e96ea39da5b19caeba91f8"
+    },
+    {
+      "sha": "f2824d8384e0dff8dd60189840616c8b333f7dd9",
+      "author": "Jad Moharam",
+      "date": "2026-10-20T19:53:29Z",
+      "message": "Integrate Omar Tabsh services and shared team interfaces",
+      "url": "https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commit/f2824d8384e0dff8dd60189840616c8b333f7dd9"
+    },
+    {
+      "sha": "db97c2f5bd3e467c48ef4db1bf408afd27e32390",
+      "author": "Omar Tabsh",
+      "date": "2026-10-20T19:41:23Z",
+      "message": "Document Omar Tabsh's APIs and the team integration contract\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "url": "https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commit/db97c2f5bd3e467c48ef4db1bf408afd27e32390"
+    },
+    {
+      "sha": "a4b329ae977ff7ddef5644583ef816bd6e30cc35",
+      "author": "Omar Tabsh",
+      "date": "2026-10-20T19:41:23Z",
+      "message": "Add run/dev-token scripts, database schema and Postman collection\n\nPostman collection covers all 18 APIs of services 4-6 with positive and\nnegative cases (validation, duplicates, 401/403/404/405).\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "url": "https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commit/a4b329ae977ff7ddef5644583ef816bd6e30cc35"
+    },
+    {
+      "sha": "250293d8df1bb521578874606436a744e1000412",
+      "author": "Omar Tabsh",
+      "date": "2026-10-20T19:37:19Z",
+      "message": "Implement Security Reports service (Service 6)\n\nSix report endpoints computed from live data fetched through the other\nservices' APIs using the caller's token. Includes end-to-end tests running\nthe threat, logging and reports services together over HTTP.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "url": "https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commit/250293d8df1bb521578874606436a744e1000412"
+    },
+    {
+      "sha": "07f06bfd23aa5e940dbe1dd6724a85ae379be136",
+      "author": "Omar Tabsh",
+      "date": "2026-10-20T19:37:18Z",
+      "message": "Implement Security Audit Logging service (Service 5)\n\nPOST /logs for administrators and trusted services, retrieval, search by\nuser/date/action/severity/service, logs by user and admin-only deletion.\nLogs are immutable: no update route and a database trigger blocks UPDATE.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "url": "https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commit/07f06bfd23aa5e940dbe1dd6724a85ae379be136"
+    },
+    {
+      "sha": "2a06e9f79a7fcea46cc50eae1c2bf80363c24e26",
+      "author": "Omar Tabsh",
+      "date": "2026-10-20T19:37:18Z",
+      "message": "Implement Threat Intelligence service (Service 4)\n\nPOST/GET/PUT/DELETE /threats, GET /threats/{id} and GET /threats/search with\nIP, domain and file hash validation, duplicate indicator rejection (409),\nrole-based access and automatic audit logging of changes and violations.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "url": "https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commit/2a06e9f79a7fcea46cc50eae1c2bf80363c24e26"
+    },
+    {
+      "sha": "bcc713ae73d320a052aaf692e72b5b3cf21a5dfe",
+      "author": "Omar Tabsh",
+      "date": "2026-10-20T19:37:12Z",
+      "message": "Add shared config, JWT authentication, response format and audit client\n\nShared building blocks for all services: role constants, JWT verification\nwith require_roles(), the agreed audit event vocabulary, the audit client\nthat sends events to POST /logs with the inter-service key, and JSON error\nhandling.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "url": "https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commit/bcc713ae73d320a052aaf692e72b5b3cf21a5dfe"
+    },
+    {
+      "sha": "a620bce031761da392a50a5ecc89ea328ae80fe7",
+      "author": "Jad Moharam",
+      "date": "2026-10-20T19:24:52Z",
+      "message": "Set up Flask and SQLite project with service requirements checklist",
+      "url": "https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commit/a620bce031761da392a50a5ecc89ea328ae80fe7"
+    },
+    {
+      "sha": "67428caa8b402d29306caff4573c1cfca4f2ecba",
+      "author": "mohannad-gh",
+      "date": "2026-10-20T12:38:51Z",
+      "message": "Initial commit",
+      "url": "https://github.com/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commit/67428caa8b402d29306caff4573c1cfca4f2ecba"
+    }
+  ],
+  "branches": [
+    {
+      "name": "jad-moharam",
+      "commit": {
+        "sha": "f0f995907271ea4513e96ea39da5b19caeba91f8",
+        "url": "https://api.github.com/repos/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commits/f0f995907271ea4513e96ea39da5b19caeba91f8"
+      },
+      "protected": false
+    },
+    {
+      "name": "main",
+      "commit": {
+        "sha": "67428caa8b402d29306caff4573c1cfca4f2ecba",
+        "url": "https://api.github.com/repos/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commits/67428caa8b402d29306caff4573c1cfca4f2ecba"
+      },
+      "protected": false
+    },
+    {
+      "name": "mohannad-services",
+      "commit": {
+        "sha": "601de8984c1247b1612a7ece5abde25443b50dc1",
+        "url": "https://api.github.com/repos/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commits/601de8984c1247b1612a7ece5abde25443b50dc1"
+      },
+      "protected": false
+    },
+    {
+      "name": "omar-tabsh-services",
+      "commit": {
+        "sha": "a0b201469673b52bb4aafab0cebebacaf6258923",
+        "url": "https://api.github.com/repos/mohannad-gh/MohannadAlGhourayeb-JadMoharam-OmarTabsh/commits/a0b201469673b52bb4aafab0cebebacaf6258923"
+      },
+      "protected": false
+    }
+  ]
+}
